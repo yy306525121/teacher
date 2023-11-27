@@ -59,6 +59,11 @@
             <artifactId>teacher-system</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cn.codeyang</groupId>
+            <artifactId>teacher-course</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

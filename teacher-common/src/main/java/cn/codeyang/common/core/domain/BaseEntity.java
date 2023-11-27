@@ -1,5 +1,8 @@
 package cn.codeyang.common.core.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,10 +22,14 @@ import java.util.Map;
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
     /**
      * 搜索值
      */
     @JsonIgnore
+    @TableField(exist = false)
     private String searchValue;
 
     /**
@@ -48,13 +55,9 @@ public class BaseEntity implements Serializable {
     private Date updateTime;
 
     /**
-     * 备注
-     */
-    private String remark;
-
-    /**
      * 请求参数
      */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @TableField(exist = false)
     private Map<String, Object> params = new HashMap<>();
 }

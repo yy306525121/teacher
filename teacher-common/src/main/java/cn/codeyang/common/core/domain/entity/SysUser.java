@@ -134,6 +134,11 @@ public class SysUser extends BaseEntity {
      */
     private Long roleId;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
     public SysUser() {
 
     }
@@ -150,4 +155,7 @@ public class SysUser extends BaseEntity {
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;
     }
+
+
+
 }

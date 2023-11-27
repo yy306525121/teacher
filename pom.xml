@@ -164,6 +164,13 @@
                 <version>${teacher.version}</version>
             </dependency>
 
+            <!-- 课程模块 -->
+            <dependency>
+                <groupId>cn.codeyang</groupId>
+                <artifactId>teacher-course</artifactId>
+                <version>${teacher.version}</version>
+            </dependency>
+
             <!-- 通用工具-->
             <dependency>
                 <groupId>cn.codeyang</groupId>
@@ -181,6 +188,7 @@
         <module>teacher-quartz</module>
         <module>teacher-generator</module>
         <module>teacher-common</module>
+        <module>teacher-course</module>
     </modules>
     <packaging>pom</packaging>
 
