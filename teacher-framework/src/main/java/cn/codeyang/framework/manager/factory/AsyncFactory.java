@@ -1,9 +1,5 @@
 package cn.codeyang.framework.manager.factory;
 
-import java.util.TimerTask;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import cn.codeyang.common.constant.Constants;
 import cn.codeyang.common.utils.LogUtils;
 import cn.codeyang.common.utils.ServletUtils;
@@ -14,9 +10,12 @@ import cn.codeyang.common.utils.spring.SpringUtils;
 import cn.codeyang.system.domain.SysLogininfor;
 import cn.codeyang.system.domain.SysOperLog;
 import cn.codeyang.system.service.ISysLogininforService;
-import cn.codeyang.system.service.ISysLogininforService;
 import cn.codeyang.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.TimerTask;
 
 /**
  * 异步工厂（产生任务用）
