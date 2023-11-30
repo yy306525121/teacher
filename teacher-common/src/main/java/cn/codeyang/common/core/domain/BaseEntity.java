@@ -22,16 +22,6 @@ import java.util.Map;
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.AUTO)
-    private Long id;
-
-    /**
-     * 搜索值
-     */
-    @JsonIgnore
-    @TableField(exist = false)
-    private String searchValue;
-
     /**
      * 创建者
      */
@@ -53,6 +43,13 @@ public class BaseEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    /**
+     * 搜索值
+     */
+    @JsonIgnore
+    @TableField(exist = false)
+    private String searchValue;
 
     /**
      * 请求参数

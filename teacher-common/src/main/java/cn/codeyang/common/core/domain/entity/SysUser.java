@@ -4,6 +4,7 @@ import cn.codeyang.common.annotation.Excel;
 import cn.codeyang.common.annotation.Excels;
 import cn.codeyang.common.core.domain.BaseEntity;
 import cn.codeyang.common.xss.Xss;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
