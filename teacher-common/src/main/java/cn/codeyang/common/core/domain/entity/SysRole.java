@@ -98,6 +98,8 @@ public class SysRole extends BaseEntity {
      */
     private Set<String> permissions;
 
+    private String remark;
+
     public SysRole() {
 
     }

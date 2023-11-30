@@ -104,6 +104,8 @@ public class SysMenu extends BaseEntity {
      */
     private String icon;
 
+    private String remark;
+
     /**
      * 子菜单
      */
