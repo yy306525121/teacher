@@ -15,15 +15,12 @@
             <groupId>cn.codeyang</groupId>
             <artifactId>teacher-common</artifactId>
         </dependency>
-    </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+        <dependency>
+            <groupId>org.choco-solver</groupId>
+            <artifactId>choco-solver</artifactId>
+            <version>4.10.14</version>
+        </dependency>
+    </dependencies>
 
 </project>
