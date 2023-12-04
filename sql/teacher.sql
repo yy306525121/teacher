@@ -47,7 +47,7 @@ create table t_subject
         primary key,
     name        varchar (30) not null comment '科目名称',
     sort    int(1) default 0 comment '排序',
-    del_flag    char        default '0' null comment '删除标志（0代表存在 2代表删除）',
+    del_flag    tinyint        default 0 null comment '删除标志（0代表存在 1代表删除）',
     create_by   varchar(64) default '' null comment '创建者',
     create_time datetime null comment '创建时间',
     update_by   varchar(64) default '' null comment '更新者',
