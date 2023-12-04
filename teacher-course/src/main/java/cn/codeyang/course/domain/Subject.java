@@ -10,12 +10,14 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_course")
-public class Course extends BaseEntity {
+@TableName("t_subject")
+public class Subject extends BaseEntity {
 
     private Long id;
 
     private String name;
+
+    private Integer sort;
 
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;

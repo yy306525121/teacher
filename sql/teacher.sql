@@ -41,11 +41,12 @@ create table t_grade
 ) engine = innodb comment '年级信息表';
 
 
-create table t_course
+create table t_subject
 (
     id          bigint auto_increment comment 'ID'
         primary key,
     name        varchar (30) not null comment '科目名称',
+    sort    int(1) default 0 comment '排序',
     del_flag    char        default '0' null comment '删除标志（0代表存在 2代表删除）',
     create_by   varchar(64) default '' null comment '创建者',
     create_time datetime null comment '创建时间',
