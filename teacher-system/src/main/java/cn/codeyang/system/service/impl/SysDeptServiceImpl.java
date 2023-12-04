@@ -268,18 +268,6 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     }
 
     /**
-     * 删除部门管理信息
-     *
-     * @param deptId 部门ID
-     *
-     * @return 结果
-     */
-    @Override
-    public int deleteDeptById(Long deptId) {
-        return baseMapper.deleteDeptById(deptId);
-    }
-
-    /**
      * 递归列表
      */
     private void recursionFn(List<SysDept> list, SysDept t) {

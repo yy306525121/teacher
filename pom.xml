@@ -33,6 +33,7 @@
         <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
         <hutool-all.version>5.8.16</hutool-all.version>
         <junit.version>4.13.2</junit.version>
+        <optaplanner.version>9.44.0.Final</optaplanner.version>
     </properties>
 
     <!-- 依赖声明 -->

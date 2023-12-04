@@ -7,6 +7,7 @@ import cn.codeyang.common.core.page.TableDataInfo;
 import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.dto.subject.SubjectAddRequest;
+import cn.codeyang.course.dto.subject.SubjectPageRequest;
 import cn.codeyang.course.dto.subject.SubjectUpdateRequest;
 import cn.codeyang.course.service.SubjectService;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +24,19 @@ import java.util.List;
 @RequestMapping("/course/subject")
 @RequiredArgsConstructor
 public class SubjectController extends BaseController {
-    private final SubjectService courseService;
+    private final SubjectService subjectService;
 
 
 
     @PreAuthorize("@ss.hasPermi('course:subject:list')")
     @PostMapping("/page")
-    public TableDataInfo list() {
+    public TableDataInfo list(@RequestBody SubjectPageRequest request) {
         startPage();
-        List<Subject> list = courseService.listBySort();
+        List<Subject> list = subjectService.list(request);
         return getDataTable(list);
     }
+
+
 
     @PreAuthorize("@ss.hasPermi('course:subject:add')")
     @Log(title = "科目管理", businessType = BusinessType.INSERT)
@@ -42,7 +45,7 @@ public class SubjectController extends BaseController {
         Subject course = new Subject();
         course.setName(request.getName());
         course.setSort(request.getSort());
-        return toAjax(courseService.save(course));
+        return toAjax(subjectService.save(course));
     }
 
     /**
@@ -56,9 +59,14 @@ public class SubjectController extends BaseController {
         course.setId(request.getId());
         course.setName(request.getName());
         course.setSort(request.getSort());
-        return toAjax(courseService.updateById(course));
+        return toAjax(subjectService.updateById(course));
     }
 
+    @PreAuthorize("@ss.hasPermi('course:subject:list')")
+    @GetMapping("/{id}")
+    public AjaxResult info(@PathVariable Long id) {
+        return AjaxResult.success(subjectService.getById(id));
+    }
 
     /**
      * 删除科目
@@ -67,7 +75,7 @@ public class SubjectController extends BaseController {
     @Log(title = "科目管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable List<Long> ids) {
-        return toAjax(courseService.removeByIds(ids));
+        return toAjax(subjectService.removeByIds(ids));
     }
 
 }

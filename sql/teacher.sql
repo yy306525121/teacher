@@ -27,12 +27,13 @@ create table t_course_setting
 ) engine = innodb comment = '课程基础设置表';
 
 
-create table t_grade
+create table t_class_info
 (
     id          bigint auto_increment comment 'ID'
         primary key,
-    grade_name  varchar(30) not null comment '年级',
+    name  varchar(30) not null comment '年级',
     parent_id   bigint      not null default 0,
+    sort int(1) default 0 comment '排序',
     del_flag    char                 default '0' null comment '删除标志（0代表存在 2代表删除）',
     create_by   varchar(64)          default '' null comment '创建者',
     create_time datetime null comment '创建时间',

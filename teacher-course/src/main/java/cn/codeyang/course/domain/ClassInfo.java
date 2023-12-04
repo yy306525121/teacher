@@ -6,19 +6,33 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * 班级信息
+ * 高一
+ *   高一(1)班
+ *   高一(2)班
+ * 高二
+ *   高二(1)班
+ *   高二(2)班
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_grade")
-public class Grade extends BaseEntity {
+@TableName("t_class_info")
+public class ClassInfo extends BaseEntity {
     /** ID */
+
     private Long id;
 
-    /** 年级外键 */
-    @Excel(name = "年级外键")
-    private String gradeName;
+    /**
+     * 名称
+     */
+    private String name;
 
+    /**
+     * 年级id
+     */
     private Long parentId;
 
-    /** 删除标志（0代表存在 2代表删除） */
-    private String delFlag;
+
+    private Integer sort;
 }

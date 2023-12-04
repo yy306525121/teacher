@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Validator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -418,7 +419,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         userRoleMapper.deleteUserRoleByUserId(userId);
         // 删除用户与岗位表
         userPostMapper.deleteUserPostByUserId(userId);
-        return baseMapper.deleteUserById(userId);
+        return baseMapper.deleteById(userId);
     }
 
     /**
@@ -439,7 +440,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         userRoleMapper.deleteUserRole(userIds);
         // 删除用户与岗位关联
         userPostMapper.deleteUserPost(userIds);
-        return baseMapper.deleteUserByIds(userIds);
+        return baseMapper.deleteBatchIds(Arrays.asList(userIds));
     }
 
     /**

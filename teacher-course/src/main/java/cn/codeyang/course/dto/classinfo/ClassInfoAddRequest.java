@@ -1,4 +1,4 @@
-package cn.codeyang.course.dto.grade;
+package cn.codeyang.course.dto.classinfo;
 
 import lombok.Data;
 
@@ -6,9 +6,11 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Data
-public class GradeAddRequest implements Serializable {
+public class ClassInfoAddRequest implements Serializable {
     @NotEmpty(message = "年级不能为空")
-    private String gradeName;
+    private String name;
+
+    private Integer sort;
 
     private Long parentId = 0L;
 }
