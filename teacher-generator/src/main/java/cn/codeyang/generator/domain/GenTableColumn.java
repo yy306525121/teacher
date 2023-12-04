@@ -2,6 +2,8 @@ package cn.codeyang.generator.domain;
 
 import cn.codeyang.common.core.domain.BaseEntity;
 import cn.codeyang.common.utils.StringUtils;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,6 +12,8 @@ import javax.validation.constraints.NotBlank;
  *
  * @author ruoyi
  */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class GenTableColumn extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -315,7 +319,7 @@ public class GenTableColumn extends BaseEntity {
     public static boolean isSuperColumn(String javaField) {
         return StringUtils.equalsAnyIgnoreCase(javaField,
                 // BaseEntity
-                "createBy", "createTime", "updateBy", "updateTime", "remark",
+                "createBy", "createTime", "updateBy", "updateTime", "delFlag",
                 // TreeEntity
                 "parentName", "parentId", "orderNum", "ancestors");
     }

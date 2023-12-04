@@ -1,0 +1,15 @@
+package ${packageName}.dto.${businessName};
+
+import lombok.Data;
+import java.io.Serializable;
+
+@Data
+public class SubjectPageRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+    private $column.javaType $column.javaField;
+#end
+#end
+}
