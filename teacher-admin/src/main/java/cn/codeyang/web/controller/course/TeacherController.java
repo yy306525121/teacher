@@ -6,7 +6,13 @@ import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.common.core.page.TableDataInfo;
 import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.domain.Teacher;
+import cn.codeyang.course.dto.teacher.TeacherAddRequest;
+import cn.codeyang.course.dto.teacher.TeacherPageRequest;
+import cn.codeyang.course.dto.teacher.TeacherPageResponse;
+import cn.codeyang.course.dto.teacher.TeacherUpdateRequest;
 import cn.codeyang.course.service.TeacherService;
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +27,11 @@ public class TeacherController extends BaseController {
     private final TeacherService teacherService;
 
 
-    @PreAuthorize("@ss.hasPermi('course:teacher:page')")
+    @PreAuthorize("@ss.hasPermi('course:teacher:list')")
     @PostMapping("/page")
-    public TableDataInfo page() {
-        startPage();
-        List<Teacher> list = teacherService.list();
-        return getDataTable(list);
+    public AjaxResult page(@RequestBody TeacherPageRequest request) {
+        IPage<TeacherPageResponse> page = teacherService.selectPage(request);
+        return success(page);
     }
 
 
@@ -35,9 +40,9 @@ public class TeacherController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('course:teacher:add')")
     @Log(title = "教师", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody Teacher teacher) {
-        return toAjax(teacherService.save(teacher));
+    @PostMapping("/add")
+    public AjaxResult add(@RequestBody TeacherAddRequest request) {
+        return toAjax(teacherService.saveTeacher(request));
     }
 
     /**
@@ -45,9 +50,15 @@ public class TeacherController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('course:teacher:edit')")
     @Log(title = "教师", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody Teacher teacher) {
-        return toAjax(teacherService.updateById(teacher));
+    @PostMapping("/update")
+    public AjaxResult edit(@RequestBody TeacherUpdateRequest request) {
+        return toAjax(teacherService.updateTeacher(request));
+    }
+
+    @PreAuthorize("@ss.hasPermi('course.teacher.list')")
+    @GetMapping("/{id}")
+    public AjaxResult info(@PathVariable Long id) {
+        return AjaxResult.success(teacherService.getById(id));
     }
 
     /**

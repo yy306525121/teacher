@@ -1,0 +1,172 @@
+<template>
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body @closed="reset">
+        <el-form ref="${businessName}Ref" :model="form" :rules="rules" label-width="80px">
+#foreach($column in $columns)
+#set($field=$column.javaField)
+#if($column.insert && !$column.pk)
+#if(($column.usableColumn) || (!$column.superColumn))
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#set($dictType=$column.dictType)
+#if($column.htmlType == "input")
+            <el-form-item label="${comment}" prop="${field}">
+              <el-input v-model="form.${field}" placeholder="请输入${comment}" />
+            </el-form-item>
+#elseif($column.htmlType == "imageUpload")
+            <el-form-item label="${comment}" prop="${field}">
+              <image-upload v-model="form.${field}"/>
+            </el-form-item>
+#elseif($column.htmlType == "fileUpload")
+            <el-form-item label="${comment}" prop="${field}">
+              <file-upload v-model="form.${field}"/>
+            </el-form-item>
+#elseif($column.htmlType == "editor")
+            <el-form-item label="${comment}">
+              <editor v-model="form.${field}" :min-height="192"/>
+            </el-form-item>
+#elseif($column.htmlType == "select" && "" != $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+                <el-select v-model="form.${field}" placeholder="请选择${comment}">
+                    <el-option
+                    v-for="dict in ${dictType}"
+                    :key="dict.value"
+                    :label="dict.label"
+#if($column.javaType == "Integer" || $column.javaType == "Long")
+                    :value="parseInt(dict.value)"
+#else
+                    :value="dict.value"
+#end
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+#elseif($column.htmlType == "select" && $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+              <el-select v-model="form.${field}" placeholder="请选择${comment}">
+                <el-option label="请选择字典生成" value="" />
+              </el-select>
+            </el-form-item>
+#elseif($column.htmlType == "checkbox" && "" != $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+              <el-checkbox-group v-model="form.${field}">
+                <el-checkbox
+                  v-for="dict in ${dictType}"
+                  :key="dict.value"
+                  :label="dict.value">
+                  {{dict.label}}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+#elseif($column.htmlType == "checkbox" && $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+              <el-checkbox-group v-model="form.${field}">
+                <el-checkbox>请选择字典生成</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+#elseif($column.htmlType == "radio" && "" != $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+              <el-radio-group v-model="form.${field}">
+                <el-radio
+                  v-for="dict in ${dictType}"
+                  :key="dict.value"
+#if($column.javaType == "Integer" || $column.javaType == "Long")
+                  :label="parseInt(dict.value)"
+#else
+                  :label="dict.value"
+#end
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+#elseif($column.htmlType == "radio" && $dictType)
+            <el-form-item label="${comment}" prop="${field}">
+              <el-radio-group v-model="form.${field}">
+                <el-radio label="1">请选择字典生成</el-radio>
+              </el-radio-group>
+            </el-form-item>
+#elseif($column.htmlType == "datetime")
+            <el-form-item label="${comment}" prop="${field}">
+              <el-date-picker clearable
+                v-model="form.${field}"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择${comment}">
+              </el-date-picker>
+            </el-form-item>
+#elseif($column.htmlType == "textarea")
+            <el-form-item label="${comment}" prop="${field}">
+              <el-input v-model="form.${field}" type="textarea" placeholder="请输入内容" />
+            </el-form-item>
+#end
+#end
+#end
+#end
+        </el-form>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button type="primary" @click="submitForm">确 定</el-button>
+                <el-button @click="cancel">取 消</el-button>
+            </div>
+        </template>
+    </el-dialog>
+</template>
+
+<script setup>
+import { add${BusinessName}, update${BusinessName} } from "@/api/${moduleName}/${businessName}";
+
+const { proxy } = getCurrentInstance();
+#if(${dicts} != '')
+#set($dictsNoSymbol=$dicts.replace("'", ""))
+const { ${dictsNoSymbol} } = proxy.useDict(${dicts});
+#end
+
+const open = ref(false);
+const title = ref("");
+const emit = defineEmits(["ok"]);
+
+const data = reactive({
+    form: {},
+    rules: {
+      #foreach ($column in $columns)
+#if($column.required)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+      $column.javaField: [
+        { required: true, message: "$comment不能为空", trigger: #if($column.htmlType == "select" || $column.htmlType == "radio")"change"#else"blur"#end }
+      ]#if($foreach.count != $columns.size()),#end
+#end
+  #end
+    }
+})
+const { form, rules } = toRefs(data);
+
+// 取消按钮
+function cancel() {
+  open.value = false;
+  reset();
+}
+
+
+// 表单重置
+function reset() {
+  form.value = {
+#foreach ($column in $columns)
+#if($column.htmlType == "checkbox")
+    $column.javaField: []#if($foreach.count != $columns.size()),#end
+#else
+    $column.javaField: null#if($foreach.count != $columns.size()),#end
+#end
+#end
+  };
+#if($table.sub)
+  ${subclassName}List.value = [];
+#end
+  proxy.resetForm("${businessName}Ref");
+}
+

@@ -126,17 +126,18 @@ public class VelocityUtils {
      */
     public static List<String> getTemplateList(String tplCategory) {
         List<String> templates = new ArrayList<String>();
-        templates.add("vm/java/pageRequest.java.vm");
         templates.add("vm/java/domain.java.vm");
         templates.add("vm/java/mapper.java.vm");
         templates.add("vm/java/service.java.vm");
         templates.add("vm/java/serviceImpl.java.vm");
         templates.add("vm/java/controller.java.vm");
         templates.add("vm/xml/mapper.xml.vm");
+        templates.add("vm/java/pageRequest.java.vm");
         templates.add("vm/sql/sql.vm");
         templates.add("vm/js/api.js.vm");
         if (GenConstants.TPL_CRUD.equals(tplCategory)) {
-            templates.add("vm/vue/index.vue.vm");
+            templates.add("vm/vue/v3/index.vue.vm");
+            templates.add("vm/vue/v3/form.vue.vm");
         } else if (GenConstants.TPL_TREE.equals(tplCategory)) {
             templates.add("vm/vue/index-tree.vue.vm");
         } else if (GenConstants.TPL_SUB.equals(tplCategory)) {

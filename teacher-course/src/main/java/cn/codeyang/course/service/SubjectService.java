@@ -7,6 +7,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 public interface SubjectService extends IService<Subject> {
-    List<Subject> list(SubjectPageRequest request);
+    List<Subject> list(String name);
 
 }

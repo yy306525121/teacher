@@ -7,6 +7,7 @@ import cn.codeyang.common.core.page.TableDataInfo;
 import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.dto.subject.SubjectAddRequest;
+import cn.codeyang.course.dto.subject.SubjectListRequest;
 import cn.codeyang.course.dto.subject.SubjectPageRequest;
 import cn.codeyang.course.dto.subject.SubjectUpdateRequest;
 import cn.codeyang.course.service.SubjectService;
@@ -30,10 +31,17 @@ public class SubjectController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('course:subject:list')")
     @PostMapping("/page")
-    public TableDataInfo list(@RequestBody SubjectPageRequest request) {
+    public TableDataInfo page(@RequestBody SubjectPageRequest request) {
         startPage();
-        List<Subject> list = subjectService.list(request);
+        List<Subject> list = subjectService.list(request.getName());
         return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('course:subject:list')")
+    @PostMapping("/list")
+    public AjaxResult list(@RequestBody SubjectListRequest request) {
+        List<Subject> list = subjectService.list(request.getName());
+        return success(list);
     }
 
 
