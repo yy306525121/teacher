@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class SysUser extends BaseEntity {
      * 用户ID
      */
     @Excel(name = "用户序号", cellType = Excel.ColumnType.NUMERIC, prompt = "用户编号")
+    @TableId
     private Long userId;
 
     /**
@@ -102,7 +104,7 @@ public class SysUser extends BaseEntity {
      * 最后登录时间
      */
     @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
-    private Date loginDate;
+    private LocalDateTime loginDate;
 
     /**
      * 部门对象
