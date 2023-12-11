@@ -1,7 +1,6 @@
 package cn.codeyang.course.dto.teacher;
 
 import cn.codeyang.course.domain.Subject;
-import com.github.yulichang.annotation.EntityMapping;
 import lombok.Data;
 
 import java.math.BigDecimal;

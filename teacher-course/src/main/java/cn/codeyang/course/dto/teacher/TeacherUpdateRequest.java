@@ -23,5 +23,5 @@ public class TeacherUpdateRequest implements Serializable {
     @NotNull(message = "教师基本工资不能为空")
     private BigDecimal basicSalary;
 
-    private List<Long> subjectList;
+    private List<Long> subjectIds;
 }

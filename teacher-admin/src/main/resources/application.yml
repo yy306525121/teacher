@@ -118,7 +118,6 @@ pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
   params: count=countSql
-
 # Swagger配置
 swagger:
   # 是否开启swagger

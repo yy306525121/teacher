@@ -1,18 +1,17 @@
-package cn.codeyang.course.domain;
+package cn.codeyang.course.dto.teacher;
 
-import cn.codeyang.common.core.domain.BaseEntity;
 import cn.codeyang.common.jackson.BigDecimalSerializable;
-import com.baomidou.mybatisplus.annotation.TableName;
+import cn.codeyang.course.dto.subject.SubjectInfoRspDto;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("t_teacher")
-public class Teacher extends BaseEntity {
+public class TeacherInfoRspDto implements Serializable {
+    private static final long serialVersionUID = 3248725213706702752L;
 
     private Long id;
 
@@ -30,5 +29,5 @@ public class Teacher extends BaseEntity {
     @JsonSerialize(using = BigDecimalSerializable.class)
     private BigDecimal basicSalary;
 
-
+    private List<SubjectInfoRspDto> subjectList;
 }

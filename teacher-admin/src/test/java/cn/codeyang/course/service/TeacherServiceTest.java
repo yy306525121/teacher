@@ -1,5 +1,6 @@
 package cn.codeyang.course.service;
 
+import cn.codeyang.course.domain.Teacher;
 import cn.codeyang.course.dto.teacher.TeacherPageRequest;
 import cn.codeyang.course.dto.teacher.TeacherPageResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,8 +23,7 @@ public class TeacherServiceTest {
         Page<TeacherPageResponse> page = new Page<>();
         page.setSize(10);
         page.setCurrent(1);
-        request.setPage(page);
-        IPage<TeacherPageResponse> result = teacherService.selectPage(request);
+        IPage<Teacher> result = teacherService.selectPageList(request);
         System.out.println(result);
     }
 }

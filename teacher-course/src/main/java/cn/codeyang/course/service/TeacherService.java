@@ -1,10 +1,7 @@
 package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.Teacher;
-import cn.codeyang.course.dto.teacher.TeacherAddRequest;
-import cn.codeyang.course.dto.teacher.TeacherPageRequest;
-import cn.codeyang.course.dto.teacher.TeacherPageResponse;
-import cn.codeyang.course.dto.teacher.TeacherUpdateRequest;
+import cn.codeyang.course.dto.teacher.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,5 +14,7 @@ public interface TeacherService extends IService<Teacher> {
 
     int updateTeacher(TeacherUpdateRequest request);
 
-    IPage<TeacherPageResponse> selectPage(TeacherPageRequest request);
+    TeacherInfoRspDto getInfo(Long id);
+
+    IPage<Teacher> selectPageList(TeacherPageRequest request);
 }

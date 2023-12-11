@@ -30,8 +30,8 @@ public class TeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('course:teacher:list')")
     @PostMapping("/page")
     public AjaxResult page(@RequestBody TeacherPageRequest request) {
-        IPage<TeacherPageResponse> page = teacherService.selectPage(request);
-        return success(page);
+        IPage<Teacher> result = teacherService.selectPageList(request);
+        return success(result);
     }
 
 
@@ -56,9 +56,9 @@ public class TeacherController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('course.teacher.list')")
-    @GetMapping("/{id}")
+    @GetMapping("/info/{id}")
     public AjaxResult info(@PathVariable Long id) {
-        return AjaxResult.success(teacherService.getById(id));
+        return AjaxResult.success(teacherService.getInfo(id));
     }
 
     /**
