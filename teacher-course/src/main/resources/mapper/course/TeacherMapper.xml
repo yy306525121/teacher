@@ -9,7 +9,7 @@
         <result column="name" property="name"/>
         <result column="basic_salary" property="basicSalary"/>
         <result column="status" property="status"/>
-        <collection property="subjectList" ofType="Subject">
+        <collection property="subjectList" ofType="cn.codeyang.course.dto.subject.SubjectInfoRspDto">
             <id column="subject_id" property="id"/>
             <result column="subject_name" property="name"/>
             <result column="subject_sort" property="sort"/>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.codeyang.course.mapper.CoursePlanMapper">
+    <select id="selectList" resultType="cn.codeyang.course.dto.courseplan.CoursePlanListRspDto">
+        select course_plan.id,
+               course_plan.class_info_id,
+               class_info.name as class_info_name,
+               course_plan.teacher_id,
+               teacher.name as teacher_name,
+               course_plan.subject_id,
+               subject.name as subject_name,
+               course_plan.week,
+               course_plan.num_in_day
+        from t_course_plan course_plan
+                 left join t_class_info class_info
+                           on class_info.id = course_plan.class_info_id and class_info.del_flag = 0
+                 left join t_teacher teacher on teacher.id = course_plan.teacher_id and teacher.del_flag = 0
+                 left join t_subject subject on subject.id = course_plan.subject_id and subject.del_flag = 0
+        where course_plan.class_info_id = #{classInfoId}
+    </select>
+</mapper>

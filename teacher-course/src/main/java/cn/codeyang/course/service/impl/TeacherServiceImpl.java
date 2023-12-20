@@ -36,7 +36,7 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
         Teacher teacher = BeanUtil.copyProperties(request, Teacher.class);
         int rows = baseMapper.insert(teacher);
 
-        List<Long> subjectList = request.getSubjectList();
+        List<Long> subjectList = request.getSubjectIds();
         if (CollUtil.isNotEmpty(subjectList)) {
             List<TeacherSubject> list = new ArrayList<>(subjectList.size());
             for (Long subjectId : subjectList) {

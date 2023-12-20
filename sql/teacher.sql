@@ -60,15 +60,15 @@ create table t_course_plan
 (
     id            bigint auto_increment comment '主键ID'
         primary key,
-    class_info_id bigint                      not null comment '班级ID',
-    teacher_id    bigint                      not null comment '教师ID',
-    course_id     bigint                      not null comment '课程ID',
-    `week`        varchar(30)                 not null comment '星期',
-    num_in_day    int(10)                     not null comment '一天中的第几节',
-    del_flag      tinyint(1)     default 0    not null comment '删除标志（0代表存在 1代表删除）',
-    create_by     varchar(64)    default ''   null comment '创建者',
-    create_time   datetime                    null comment '创建时间',
-    update_by     varchar(64)    default ''   null comment '更新者',
-    update_time   datetime                    null comment '更新时间'
+    class_info_id bigint                 not null comment '班级ID',
+    teacher_id    bigint                 not null comment '教师ID',
+    subject_id     bigint                 not null comment '课程ID',
+    `week`        varchar(30)            not null comment '星期',
+    num_in_day    int(10)                not null comment '一天中的第几节',
+    del_flag      tinyint(1)  default 0  not null comment '删除标志（0代表存在 1代表删除）',
+    create_by     varchar(64) default '' null comment '创建者',
+    create_time   datetime               null comment '创建时间',
+    update_by     varchar(64) default '' null comment '更新者',
+    update_time   datetime               null comment '更新时间'
 )
     comment '课程表';

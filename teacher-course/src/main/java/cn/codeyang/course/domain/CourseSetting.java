@@ -19,21 +19,21 @@ public class CourseSetting extends BaseEntity {
 
     /** 每周上几天课 */
     @Excel(name = "每周上几天课")
-    private Long dayOfPerWeek;
+    private Integer dayOfPerWeek;
 
     /** 早自习几节课 */
     @Excel(name = "早自习几节课")
-    private Long sizeOfMorningEarly;
+    private Integer sizeOfMorningEarly;
 
     /** 上午几节课 */
     @Excel(name = "上午几节课")
-    private Long sizeOfMorning;
+    private Integer sizeOfMorning;
 
     /** 下午几节课 */
     @Excel(name = "下午几节课")
-    private Long sizeOfAfternoon;
+    private Integer sizeOfAfternoon;
 
     /** 晚自习几节课 */
     @Excel(name = "晚自习几节课")
-    private Long sizeOfNight;
+    private Integer sizeOfNight;
 }

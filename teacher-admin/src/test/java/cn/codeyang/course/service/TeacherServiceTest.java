@@ -1,6 +1,7 @@
 package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.Teacher;
+import cn.codeyang.course.dto.teacher.TeacherInfoRspDto;
 import cn.codeyang.course.dto.teacher.TeacherPageRequest;
 import cn.codeyang.course.dto.teacher.TeacherPageResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -25,5 +26,11 @@ public class TeacherServiceTest {
         page.setCurrent(1);
         IPage<Teacher> result = teacherService.selectPageList(request);
         System.out.println(result);
+    }
+
+    @Test
+    public void testGetInfo() {
+        TeacherInfoRspDto info = teacherService.getInfo(1732389869996036097L);
+        System.out.println(info);
     }
 }
