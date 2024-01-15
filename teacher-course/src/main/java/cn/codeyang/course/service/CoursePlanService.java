@@ -8,5 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 public interface CoursePlanService extends IService<CoursePlan> {
-    List<CoursePlanListRspDto> list(CoursePlanListRequest request);
+    List<CoursePlanListRspDto> selectListByClassInfoId(Long classInfoId);
+
+    List<CoursePlan> selectListByWeekAndTeacherId(int week, Long teacherId);
 }

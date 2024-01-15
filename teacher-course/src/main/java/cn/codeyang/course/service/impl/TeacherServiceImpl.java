@@ -84,4 +84,15 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
                 .eq(StrUtil.isNotEmpty(request.getStatus()), Teacher::getStatus, request.getStatus())
                 .orderByDesc(Teacher::getCreateTime));
     }
+
+    @Override
+    public Teacher getByName(String name) {
+        return baseMapper.selectOne(Wrappers.<Teacher>lambdaQuery()
+                .eq(Teacher::getName,name));
+    }
+
+    @Override
+    public List<Teacher> selectListBySubjectName(String subjectName) {
+        return baseMapper.selectListBySubjectName(subjectName);
+    }
 }

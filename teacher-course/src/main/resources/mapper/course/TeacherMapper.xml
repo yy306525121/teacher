@@ -59,4 +59,19 @@
         where teacher.id = #{id}
         order by teacher.create_time desc, subject.sort
     </select>
+    <select id="selectListBySubjectName" resultType="cn.codeyang.course.domain.Teacher">
+        select teacher.id,
+               teacher.name,
+               teacher.status,
+               teacher.basic_salary,
+               teacher.del_flag,
+               teacher.create_by,
+               teacher.create_time,
+               teacher.update_by,
+               teacher.update_time
+        from t_teacher teacher
+                 left join t_teacher_subject teacher_subject on teacher_subject.teacher_id = teacher.id
+                 left join t_subject subject on subject.id = teacher_subject.subject_id
+        where subject.name = #{subjectName} and subject.del_flag = 0 and teacher.del_flag = 0;
+    </select>
 </mapper>

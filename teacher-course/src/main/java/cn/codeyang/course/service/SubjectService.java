@@ -9,4 +9,6 @@ import java.util.List;
 public interface SubjectService extends IService<Subject> {
     List<Subject> list(String name);
 
+
+    Subject getByName(String name);
 }

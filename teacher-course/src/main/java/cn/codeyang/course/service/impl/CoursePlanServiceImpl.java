@@ -15,7 +15,14 @@ import java.util.List;
 @Service
 public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CoursePlan> implements CoursePlanService {
     @Override
-    public List<CoursePlanListRspDto> list(CoursePlanListRequest request) {
-        return baseMapper.selectList(request);
+    public List<CoursePlanListRspDto> selectListByClassInfoId(Long classInfoId) {
+        return baseMapper.selectListByClassInfoId(classInfoId);
+    }
+
+    @Override
+    public List<CoursePlan> selectListByWeekAndTeacherId(int week, Long teacherId) {
+        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
+                .eq(CoursePlan::getWeek, week)
+                .eq(teacherId != null, CoursePlan::getTeacherId, teacherId));
     }
 }

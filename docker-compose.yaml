@@ -1,0 +1,23 @@
+version: "3"
+services:
+  team-city:
+    container_name: teamcity
+    image: "jetbrains/teamcity-server"
+    ports:
+      - "8111:8111"
+    volumes:
+      - '/volume1/docker/teamcity/datadir:/data/teamcity_server/datadir'
+      - '/volume1/docker/teamcity/logs:/opt/teamcity/logs'
+  team-city-agent:
+    container_name: teamcity-agent
+    image: "jetbrains/teamcity-agent"
+    environment:
+      - "SERVER_URL=http://teamcity:8111"
+    volumes:
+      - "/volume1/docker/teamcity-agent/conf:/data/teamcity_agent/conf"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/volume1/docker/teamcity-agent/work:/opt/buildagent/work"
+      - "/volume1/docker/teamcity-agent/temp:/opt/buildagent/temp"
+      - "/volume1/docker/teamcity-agent/tools:/opt/buildagent/tools"
+      - "/volume1/docker/teamcity-agent/plugins:/opt/buildagent/plugins"
+      - "/volume1/docker/teamcity-agent/system:/opt/buildagent/system"

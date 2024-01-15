@@ -24,7 +24,7 @@ import static cn.codeyang.common.core.domain.AjaxResult.success;
 
 @Slf4j
 @RestController
-@RequestMapping("/course/courseplan")
+@RequestMapping("/course/plan")
 @RequiredArgsConstructor
 public class CoursePlanController {
     private final CoursePlanService coursePlanService;
@@ -33,7 +33,7 @@ public class CoursePlanController {
     @PreAuthorize("@ss.hasPermi('course:courseplan:list')")
     @PostMapping("/list")
     public AjaxResult list(@RequestBody CoursePlanListRequest request) {
-        List<CoursePlanListRspDto> list = coursePlanService.list(request);
+        List<CoursePlanListRspDto> list = coursePlanService.selectListByClassInfoId(request.getClassInfoId());
         CourseSetting courseSetting = courseSettingService.getCurrent();
         // 每天上几节课
         int numEveryDay = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning() + courseSetting.getSizeOfAfternoon() + courseSetting.getSizeOfNight();
@@ -77,9 +77,9 @@ public class CoursePlanController {
             // 周五
             collect.stream().filter(item -> item.getWeek() == 5).findFirst().ifPresent(dto::setFriday);
             // 周六
-            collect.stream().filter(item -> item.getWeek() == 5).findFirst().ifPresent(dto::setFriday);
+            collect.stream().filter(item -> item.getWeek() == 6).findFirst().ifPresent(dto::setSaturday);
             // 周末
-            collect.stream().filter(item -> item.getWeek() == 5).findFirst().ifPresent(dto::setSunday);
+            collect.stream().filter(item -> item.getWeek() == 7).findFirst().ifPresent(dto::setSunday);
             dto.setNumInDay(num);
             rspDtoList.add(dto);
         }

@@ -8,5 +8,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import java.util.List;
 
 public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
-    List<CoursePlanListRspDto> selectList(CoursePlanListRequest request);
+    List<CoursePlanListRspDto> selectListByClassInfoId(Long classInfoId);
 }

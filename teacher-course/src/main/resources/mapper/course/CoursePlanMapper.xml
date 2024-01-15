@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.codeyang.course.mapper.CoursePlanMapper">
-    <select id="selectList" resultType="cn.codeyang.course.dto.courseplan.CoursePlanListRspDto">
+    <select id="selectListByClassInfoId" resultType="cn.codeyang.course.dto.courseplan.CoursePlanListRspDto">
         select course_plan.id,
                course_plan.class_info_id,
                class_info.name as class_info_name,

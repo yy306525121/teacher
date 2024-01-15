@@ -18,4 +18,10 @@ public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject> impl
                         .like(StrUtil.isNotEmpty(name), Subject::getName, name)
                 .orderByAsc(Subject::getSort));
     }
+
+    @Override
+    public Subject getByName(String name) {
+        return baseMapper.selectOne(Wrappers.<Subject>lambdaQuery()
+                .eq(Subject::getName, name));
+    }
 }

@@ -17,4 +17,8 @@ public interface TeacherService extends IService<Teacher> {
     TeacherInfoRspDto getInfo(Long id);
 
     IPage<Teacher> selectPageList(TeacherPageRequest request);
+
+    Teacher getByName(String name);
+
+    List<Teacher> selectListBySubjectName(String subjectName);
 }
