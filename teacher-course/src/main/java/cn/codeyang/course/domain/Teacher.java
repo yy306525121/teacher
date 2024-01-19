@@ -30,5 +30,10 @@ public class Teacher extends BaseEntity {
     @JsonSerialize(using = BigDecimalSerializable.class)
     private BigDecimal basicSalary;
 
+    /**
+     * 课时费
+     */
+    @JsonSerialize(using = BigDecimalSerializable.class)
+    private BigDecimal courseSalary;
 
 }

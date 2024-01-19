@@ -3,6 +3,7 @@ package cn.codeyang.web.controller.course;
 import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.CourseSetting;
+import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRspDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ public class CoursePlanController {
     @PreAuthorize("@ss.hasPermi('course:courseplan:list')")
     @PostMapping("/list")
     public AjaxResult list(@RequestBody CoursePlanListRequest request) {
-        List<CoursePlanListRspDto> list = coursePlanService.selectListByClassInfoId(request.getClassInfoId());
+        List<CoursePlanDto> list = coursePlanService.selectListByClassInfoId(request.getClassInfoId());
         CourseSetting courseSetting = courseSettingService.getCurrent();
         // 每天上几节课
         int numEveryDay = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning() + courseSetting.getSizeOfAfternoon() + courseSetting.getSizeOfNight();
@@ -41,7 +43,6 @@ public class CoursePlanController {
         int timeFirst = courseSetting.getSizeOfMorningEarly();
         int timeSecond = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning();
         int timeThird = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning() + courseSetting.getSizeOfAfternoon();
-        int timeFourth = numEveryDay;
 
         List<CoursePlanViewRspDto> rspDtoList = new ArrayList<>();
 
@@ -65,21 +66,21 @@ public class CoursePlanController {
                 dto.setTime("夜自习");
             }
 
-            List<CoursePlanListRspDto> collect = list.stream().filter(item -> item.getNumInDay() == finalI).collect(Collectors.toList());
+            List<CoursePlanDto> collect = list.stream().filter(item -> item.getTimeSlot().getSortOfDay() == finalI).collect(Collectors.toList());
             // 周一
-            collect.stream().filter(item -> item.getWeek() == 1).findFirst().ifPresent(dto::setMonday);
+            collect.stream().filter(item -> DayOfWeek.MONDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setMonday);
             // 周二
-            collect.stream().filter(item -> item.getWeek() == 2).findFirst().ifPresent(dto::setTuesday);
+            collect.stream().filter(item -> DayOfWeek.TUESDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setTuesday);
             // 周三
-            collect.stream().filter(item -> item.getWeek() == 3).findFirst().ifPresent(dto::setWednesday);
+            collect.stream().filter(item -> DayOfWeek.WEDNESDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setWednesday);
             // 周四
-            collect.stream().filter(item -> item.getWeek() == 4).findFirst().ifPresent(dto::setThursday);
+            collect.stream().filter(item -> DayOfWeek.THURSDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setThursday);
             // 周五
-            collect.stream().filter(item -> item.getWeek() == 5).findFirst().ifPresent(dto::setFriday);
+            collect.stream().filter(item -> DayOfWeek.FRIDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setFriday);
             // 周六
-            collect.stream().filter(item -> item.getWeek() == 6).findFirst().ifPresent(dto::setSaturday);
+            collect.stream().filter(item -> DayOfWeek.SATURDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setSaturday);
             // 周末
-            collect.stream().filter(item -> item.getWeek() == 7).findFirst().ifPresent(dto::setSunday);
+            collect.stream().filter(item -> DayOfWeek.SUNDAY.equals(item.getTimeSlot().getDayOfWeek())).findFirst().ifPresent(dto::setSunday);
             dto.setNumInDay(num);
             rspDtoList.add(dto);
         }

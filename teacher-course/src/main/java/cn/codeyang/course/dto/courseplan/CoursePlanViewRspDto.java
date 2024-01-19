@@ -9,13 +9,13 @@ import java.io.Serializable;
  */
 @Data
 public class CoursePlanViewRspDto implements Serializable {
-    private CoursePlanListRspDto monday;
-    private CoursePlanListRspDto tuesday;
-    private CoursePlanListRspDto wednesday;
-    private CoursePlanListRspDto thursday;
-    private CoursePlanListRspDto friday;
-    private CoursePlanListRspDto saturday;
-    private CoursePlanListRspDto sunday;
+    private CoursePlanDto monday;
+    private CoursePlanDto tuesday;
+    private CoursePlanDto wednesday;
+    private CoursePlanDto thursday;
+    private CoursePlanDto friday;
+    private CoursePlanDto saturday;
+    private CoursePlanDto sunday;
     private Integer numInDay;
     private String time;
 }

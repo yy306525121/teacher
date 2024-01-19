@@ -1,15 +1,15 @@
 package cn.codeyang.course.service.impl;
 
 import cn.codeyang.course.constant.CourseConstant;
-import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.CourseFee;
 import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.domain.Teacher;
+import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.lessonfee.CourseFeeDetailRspDto;
 import cn.codeyang.course.dto.lessonfee.CourseFeePageRspDto;
 import cn.codeyang.course.mapper.CourseFeeMapper;
-import cn.codeyang.course.service.CoursePlanService;
 import cn.codeyang.course.service.CourseFeeService;
+import cn.codeyang.course.service.CoursePlanService;
 import cn.codeyang.course.service.SubjectService;
 import cn.codeyang.course.service.TeacherService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
     private List<CourseFee> calculate(Long teacherId, LocalDate date) {
         int week = date.getDayOfWeek().getValue();
         // 1. 查询指定周下的所有课程计划
-        List<CoursePlan> coursePlans = coursePlanService.selectListByWeekAndTeacherId(week, teacherId);
+        List<CoursePlanDto> coursePlans = coursePlanService.selectListByWeekAndTeacherId(DayOfWeek.of(week), teacherId);
 
         List<CourseFee> courseFeeList = new ArrayList<>(coursePlans.size());
 
@@ -79,24 +79,19 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
         courseFeeList.addAll(calculateMorningEarly(date, week));
 
 
-        for (CoursePlan coursePlan : coursePlans) {
-            if (coursePlan.getTeacherId() == null) {
+        for (CoursePlanDto coursePlan : coursePlans) {
+            if (coursePlan.getTeacher() == null) {
                 continue;
             }
 
-            BigDecimal count = CourseConstant.NORMAL_FEE;
-            if (coursePlan.getSubjectId() == null) {
-                // 自习课
-                count = CourseConstant.SELF_FEE;
-            }
             CourseFee courseFee = new CourseFee();
-            courseFee.setCount(count);
+            courseFee.setCount(coursePlan.getCourseType().getCoursePeriod());
             courseFee.setDate(date);
-            courseFee.setTeacherId(coursePlan.getTeacherId());
-            courseFee.setClassInfoId(coursePlan.getClassInfoId());
-            courseFee.setSubjectId(coursePlan.getSubjectId());
-            courseFee.setWeek(coursePlan.getWeek());
-            courseFee.setNumInDay(coursePlan.getNumInDay());
+            courseFee.setTeacherId(coursePlan.getTeacher().getId());
+            courseFee.setClassInfoId(coursePlan.getClassInfo().getId());
+            courseFee.setSubjectId(coursePlan.getSubject().getId());
+            courseFee.setWeek(coursePlan.getTimeSlot().getDayOfWeek().getValue());
+            courseFee.setNumInDay(coursePlan.getTimeSlot().getSortOfDay());
             courseFeeList.add(courseFee);
         }
 

@@ -15,21 +15,21 @@ public class CoursePlan extends BaseEntity {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @TableField(value = "class_info_id")
     private Long classInfoId;
 
     private Long teacherId;
 
     private Long subjectId;
 
-    private Integer week;
-
-    private Integer numInDay;
+    /**
+     * 课程时间外键
+     */
+    private Long timeSlotId;
 
     /**
      * 课程类型
      * 1-值班课时
      * 2-正常课时
      */
-    private Integer planType;
+    private Integer courseTypeId;
 }

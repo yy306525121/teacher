@@ -3,21 +3,73 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.codeyang.course.mapper.CoursePlanMapper">
-    <select id="selectListByClassInfoId" resultType="cn.codeyang.course.dto.courseplan.CoursePlanListRspDto">
+    <resultMap id="BaseMapper" type="cn.codeyang.course.dto.courseplan.CoursePlanDto">
+        <id property="id" column="course_plan_id"/>
+        <association property="classInfo" javaType="ClassInfo">
+            <id property="id" column="class_info_id"/>
+            <result property="name" column="class_info_name"/>
+            <result property="sort" column="class_info_sort"/>
+            <result property="parentId" column="class_info_parent_id"/>
+        </association>
+
+        <association property="teacher" javaType="Teacher">
+            <id property="id" column="teacher_id"/>
+            <result property="name" column="teacher_name"/>
+            <result property="status" column="teacher_status"/>
+            <result property="basicSalary" column="teacher_basic_salary"/>
+            <result property="courseSalary" column="teacher_course_salary"/>
+        </association>
+
+        <association property="subject" javaType="Subject">
+            <id property="id" column="subject_id"/>
+            <result property="name" column="subject_name"/>
+            <result property="sort" column="subject_sort"/>
+        </association>
+
+        <association property="timeSlot" javaType="TimeSlot">
+            <id property="id" column="time_slot_id"/>
+            <result property="dayOfWeek" column="day_of_week"/>
+            <result property="sortOfDay" column="sort_of_day"/>
+        </association>
+    </resultMap>
+
+    <sql id="BaseSql">
         select course_plan.id,
-               course_plan.class_info_id,
+               class_info.id as class_info_id,
                class_info.name as class_info_name,
-               course_plan.teacher_id,
+               class_info.sort as class_info_sort,
+               class_info.parent_id as class_info_parent_id,
+               teacher.id as teacher_id,
                teacher.name as teacher_name,
-               course_plan.subject_id,
+               teacher.status as teacher_status,
+               teacher.basic_salary as teacher_basic_salar,
+               teacher.course_salary as teacher_course_salary,
+               subject.id as subject_id,
                subject.name as subject_name,
-               course_plan.week,
-               course_plan.num_in_day
+               subject.sort as subject_sort,
+               time_slot.id as time_slot_id,
+               time_slot.day_of_week as day_of_week,
+               time_slot.sort_of_day as sort_of_day
         from t_course_plan course_plan
                  left join t_class_info class_info
                            on class_info.id = course_plan.class_info_id and class_info.del_flag = 0
                  left join t_teacher teacher on teacher.id = course_plan.teacher_id and teacher.del_flag = 0
                  left join t_subject subject on subject.id = course_plan.subject_id and subject.del_flag = 0
-        where course_plan.class_info_id = #{classInfoId}
+                 left join t_time_slot time_slot on time_slot.id = course_plan.time_slot_id and time_slot.del_flag = 0
+    </sql>
+
+
+    <select id="selectListByClassInfoId" resultMap="BaseMapper">
+        <include refid="BaseSql"/>
+        where course_plan.class_info_id = #{classInfoId} and course_plan.del_flag = 0
     </select>
+    <select id="selectListByWeekAndTeacherId" resultType="cn.codeyang.course.dto.courseplan.CoursePlanDto">
+        <include refid="BaseSql"/>
+        where time_slot.day_of_week = #{week}
+        <if test="teacherId != null and teacherId != ''">
+            and teacher.id = #{teacherId}
+        </if>
+    </select>
+
+
 </mapper>
