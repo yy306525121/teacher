@@ -13,7 +13,7 @@ import java.time.DayOfWeek;
 public class TimeSlot extends BaseEntity {
     private Long id;
 
-    private DayOfWeek dayOfWeek;
+    private Integer dayOfWeek;
 
     private int sortOfDay;
 }

@@ -100,7 +100,7 @@ create table t_time_slot
 (
     id          bigint auto_increment comment 'id'
         primary key,
-    day_of_week varchar(32)            null comment '周几',
+    day_of_week int            null comment '周几',
     sort_of_day int                    null comment '每天中的第几节课',
     del_flag    tinyint(1)  default 0  not null comment '删除标志（0代表存在 1代表删除）',
     create_by   varchar(64) default '' null comment '创建者',

@@ -31,6 +31,13 @@
             <result property="dayOfWeek" column="day_of_week"/>
             <result property="sortOfDay" column="sort_of_day"/>
         </association>
+
+        <association property="courseType" javaType="CourseType">
+            <id property="id" column="course_type_id"/>
+            <result property="name" column="course_type_name"/>
+            <result property="type" column="course_type_type"/>
+            <result property="coursePeriod" column="course_type_period"/>
+        </association>
     </resultMap>
 
     <sql id="BaseSql">
@@ -49,13 +56,18 @@
                subject.sort as subject_sort,
                time_slot.id as time_slot_id,
                time_slot.day_of_week as day_of_week,
-               time_slot.sort_of_day as sort_of_day
+               time_slot.sort_of_day as sort_of_day,
+               course_type.id as course_type_id,
+               course_type.name as course_type_name,
+               course_type.type as course_type_type,
+               course_type.course_period as course_type_period
         from t_course_plan course_plan
                  left join t_class_info class_info
                            on class_info.id = course_plan.class_info_id and class_info.del_flag = 0
                  left join t_teacher teacher on teacher.id = course_plan.teacher_id and teacher.del_flag = 0
                  left join t_subject subject on subject.id = course_plan.subject_id and subject.del_flag = 0
                  left join t_time_slot time_slot on time_slot.id = course_plan.time_slot_id and time_slot.del_flag = 0
+                 left join t_course_type course_type on course_type.id = course_plan.course_type_id and course_type.del_flag = 0
     </sql>
 
 

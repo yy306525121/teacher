@@ -90,7 +90,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             courseFee.setTeacherId(coursePlan.getTeacher().getId());
             courseFee.setClassInfoId(coursePlan.getClassInfo().getId());
             courseFee.setSubjectId(coursePlan.getSubject().getId());
-            courseFee.setWeek(coursePlan.getTimeSlot().getDayOfWeek().getValue());
+            courseFee.setWeek(coursePlan.getTimeSlot().getDayOfWeek());
             courseFee.setNumInDay(coursePlan.getTimeSlot().getSortOfDay());
             courseFeeList.add(courseFee);
         }
