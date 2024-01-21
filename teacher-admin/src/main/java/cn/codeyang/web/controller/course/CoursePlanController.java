@@ -1,11 +1,9 @@
 package cn.codeyang.web.controller.course;
 
 import cn.codeyang.common.core.domain.AjaxResult;
-import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.CourseSetting;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
-import cn.codeyang.course.dto.courseplan.CoursePlanListRspDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
 import cn.codeyang.course.service.CoursePlanService;
 import cn.codeyang.course.service.CourseSettingService;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
