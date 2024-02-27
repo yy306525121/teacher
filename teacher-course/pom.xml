@@ -18,8 +18,12 @@
 
         <dependency>
             <groupId>org.optaplanner</groupId>
-            <artifactId>optaplanner-core</artifactId>
-            <version>${optaplanner.version}</version>
+            <artifactId>optaplanner-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.optaplanner</groupId>
+            <artifactId>optaplanner-test</artifactId>
         </dependency>
     </dependencies>
 
