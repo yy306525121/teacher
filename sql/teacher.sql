@@ -101,7 +101,9 @@ create table t_time_slot
     id          bigint auto_increment comment 'id'
         primary key,
     day_of_week int            null comment '周几',
-    sort_of_day int                    null comment '每天中的第几节课',
+    start_time  time           null comment '开始时间',
+    end_time    time           null comment '结束时间',
+    type        tinyint(1)     null comment '类型 1:课时 2:早自习 3:晚自习',
     del_flag    tinyint(1)  default 0  not null comment '删除标志（0代表存在 1代表删除）',
     create_by   varchar(64) default '' null comment '创建者',
     create_time datetime               null comment '创建时间',

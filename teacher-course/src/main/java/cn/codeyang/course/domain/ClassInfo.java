@@ -5,6 +5,7 @@ import cn.codeyang.common.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 /**
  * 班级信息
@@ -20,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @TableName("t_class_info")
 public class ClassInfo extends BaseEntity {
     /** ID */
-
+    @PlanningId
     private Long id;
 
     /**

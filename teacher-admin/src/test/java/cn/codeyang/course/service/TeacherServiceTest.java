@@ -10,10 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("dev")
 public class TeacherServiceTest {
     @Autowired
     private TeacherService teacherService;
@@ -26,6 +28,13 @@ public class TeacherServiceTest {
         page.setCurrent(1);
         IPage<Teacher> result = teacherService.selectPageList(request);
         System.out.println(result);
+    }
+
+    @Test
+    public void testSave() {
+        Teacher teacher = new Teacher();
+        teacher.setName("张三");
+        teacherService.save(teacher);
     }
 
     @Test
