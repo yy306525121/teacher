@@ -22,7 +22,6 @@ public class TimeSlotServiceTest {
     @Test
     public void saveTest() {
         TimeSlot entity = new TimeSlot();
-        entity.setDayOfWeek(1);
         entity.setSortOfDay(1);
         timeSlotService.save(entity);
     }

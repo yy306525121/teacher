@@ -65,19 +65,19 @@ public class CoursePlanController {
 
             List<CoursePlanDto> collect = list.stream().filter(item -> item.getTimeSlot().getSortOfDay() == finalI).collect(Collectors.toList());
             // 周一
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 1).findFirst().ifPresent(dto::setMonday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 1).findFirst().ifPresent(dto::setMonday);
             // 周二
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 2).findFirst().ifPresent(dto::setTuesday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 2).findFirst().ifPresent(dto::setTuesday);
             // 周三
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 3).findFirst().ifPresent(dto::setWednesday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 3).findFirst().ifPresent(dto::setWednesday);
             // 周四
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 4).findFirst().ifPresent(dto::setThursday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 4).findFirst().ifPresent(dto::setThursday);
             // 周五
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 5).findFirst().ifPresent(dto::setFriday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 5).findFirst().ifPresent(dto::setFriday);
             // 周六
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 6).findFirst().ifPresent(dto::setSaturday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 6).findFirst().ifPresent(dto::setSaturday);
             // 周末
-            collect.stream().filter(item -> item.getTimeSlot().getDayOfWeek() == 7).findFirst().ifPresent(dto::setSunday);
+            collect.stream().filter(item -> item.getDayOfWeek() == 7).findFirst().ifPresent(dto::setSunday);
             dto.setNumInDay(num);
             rspDtoList.add(dto);
         }

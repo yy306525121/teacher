@@ -16,11 +16,6 @@ public class TimeSlot extends BaseEntity {
     @PlanningId
     private Long id;
 
-    /**
-     * 周几
-     */
-    private Integer dayOfWeek;
-
     private LocalTime startTime;
     private LocalTime endTime;
 
