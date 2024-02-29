@@ -101,7 +101,6 @@ create table t_time_slot
 (
     id          bigint auto_increment comment 'id'
         primary key,
-    day_of_week int            null comment '周几',
     start_time  time           null comment '开始时间',
     end_time    time           null comment '结束时间',
     type        tinyint(1)     null comment '类型 1:课时 2:早自习 3:晚自习',
