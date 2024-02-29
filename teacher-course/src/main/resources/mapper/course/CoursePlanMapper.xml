@@ -5,6 +5,7 @@
 <mapper namespace="cn.codeyang.course.mapper.CoursePlanMapper">
     <resultMap id="BaseMapper" type="cn.codeyang.course.dto.courseplan.CoursePlanDto">
         <id property="id" column="course_plan_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
         <association property="classInfo" javaType="ClassInfo">
             <id property="id" column="class_info_id"/>
             <result property="name" column="class_info_name"/>
@@ -42,6 +43,7 @@
 
     <sql id="BaseSql">
         select course_plan.id,
+               course_plan.day_of_week,
                class_info.id as class_info_id,
                class_info.name as class_info_name,
                class_info.sort as class_info_sort,
@@ -75,11 +77,23 @@
         <include refid="BaseSql"/>
         where course_plan.class_info_id = #{classInfoId} and course_plan.del_flag = 0
     </select>
-    <select id="selectListByWeekAndTeacherId" resultType="cn.codeyang.course.dto.courseplan.CoursePlanDto">
+    <select id="selectListByWeekAndTeacherId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
-        where time_slot.day_of_week = #{week}
+        where course_plan.day_of_week = #{week}
         <if test="teacherId != null and teacherId != ''">
             and teacher.id = #{teacherId}
+        </if>
+        <if test="coursePlanFilterList != null and coursePlanFilterList.size() > 0">
+            and (
+            <foreach collection="coursePlanFilterList" item="filter" open="(" close=")" separator="or">
+                <if test="filter.classInfoId != null and filter.classInfoId != ''">
+                    class_info.parent_id = #{filter.classInfoId}
+                </if>
+                <if test="filter.sortOfDayStart != null and filter.sortOfDayStart != ''">
+                    and time_slot.sort_of_day &gt;= #{filter.sortOfDayStart}
+                </if>
+            </foreach>
+            )
         </if>
     </select>
 

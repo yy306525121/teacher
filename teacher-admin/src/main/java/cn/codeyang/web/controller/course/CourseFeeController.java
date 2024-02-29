@@ -48,9 +48,11 @@ public class CourseFeeController extends BaseController {
     @PostMapping("/calculate")
     public AjaxResult calculate(@RequestBody CourseFeeCalculateReqDto request) {
         LocalDate date = request.getDate();
-        LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
+        // LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
+        // LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
 
+        LocalDate start = LocalDate.of(2024, 2, 26);
+        LocalDate end = LocalDate.of(2024, 2, 29);
         courseFeeService.calculate(request.getTeacherId(), start, end);
         return success();
     }

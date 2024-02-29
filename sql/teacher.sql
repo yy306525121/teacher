@@ -66,6 +66,7 @@ create table t_course_plan
     teacher_id    bigint comment '教师ID',
     subject_id    bigint comment '课程ID',
     time_slot_id    bigint comment '课程时间ID',
+    day_of_week     tinyint(1) comment '星期',
     course_type_id  bigint comment '课程类型ID',
     del_flag      tinyint(1)  default 0  not null comment '删除标志（0代表存在 1代表删除）',
     create_by     varchar(64) default '' null comment '创建者',

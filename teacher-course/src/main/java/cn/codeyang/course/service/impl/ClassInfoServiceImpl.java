@@ -41,6 +41,12 @@ public class ClassInfoServiceImpl extends ServiceImpl<ClassInfoMapper, ClassInfo
                 .orderByAsc(ClassInfo::getSort));
     }
 
+    @Override
+    public List<ClassInfo> listByParentIdList(List<Long> classInfoIdList) {
+        return this.baseMapper.selectList(Wrappers.<ClassInfo>lambdaQuery()
+                .in(ClassInfo::getParentId, classInfoIdList));
+    }
+
     private Function<ClassInfo, TreeNode<Long>> getNodeFunction() {
         return classInfo -> {
             TreeNode<Long> node = new TreeNode<>();

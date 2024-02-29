@@ -20,5 +20,5 @@ public interface TeacherService extends IService<Teacher> {
 
     Teacher getByName(String name);
 
-    List<Teacher> selectListBySubjectName(String subjectName);
+    List<Teacher> selectListBySubjectName(String subjectName, List<Long> classInfoIdList);
 }

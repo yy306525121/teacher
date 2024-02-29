@@ -36,4 +36,6 @@ public class CoursePlan extends BaseEntity {
      * 2-正常课时
      */
     private Integer courseTypeId;
+
+    private Integer dayOfWeek;
 }

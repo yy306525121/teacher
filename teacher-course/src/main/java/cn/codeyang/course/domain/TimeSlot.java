@@ -19,14 +19,15 @@ public class TimeSlot extends BaseEntity {
     /**
      * 周几
      */
-    private DayOfWeek dayOfWeek;
+    private Integer dayOfWeek;
 
     private LocalTime startTime;
     private LocalTime endTime;
 
     /**
-     * 早自习、晚自习、课时
+     * 1:早自习、2:晚自习、3:课时
      */
     private Integer type;
 
+    private int sortOfDay;
 }

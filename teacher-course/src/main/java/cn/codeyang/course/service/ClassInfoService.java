@@ -13,4 +13,6 @@ public interface ClassInfoService extends IService<ClassInfo> {
     List<Tree<Long>> tree();
 
     List<ClassInfo> list(ClassInfoListRequest request);
+
+    List<ClassInfo> listByParentIdList(List<Long> classInfoIdList);
 }

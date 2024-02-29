@@ -72,6 +72,12 @@
         from t_teacher teacher
                  left join t_teacher_subject teacher_subject on teacher_subject.teacher_id = teacher.id
                  left join t_subject subject on subject.id = teacher_subject.subject_id
-        where subject.name = #{subjectName} and subject.del_flag = 0 and teacher.del_flag = 0;
+        where subject.name = #{subjectName} and subject.del_flag = 0 and teacher.del_flag = 0
+        <if test="teacherIdList != null and teacherIdList.size() > 0">
+            and teacher.id in
+            <foreach collection="teacherIdList" item="teacherId" open="(" close=")" separator=",">
+                #{teacherId}
+            </foreach>
+        </if>
     </select>
 </mapper>

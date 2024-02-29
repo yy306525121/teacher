@@ -14,5 +14,5 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
 
     TeacherInfoRspDto getInfo(Long id);
 
-    List<Teacher> selectListBySubjectName(@Param("subjectName") String subjectName);
+    List<Teacher> selectListBySubjectName(@Param("subjectName") String subjectName, @Param("teacherIdList") List<Long> teacherIdList);
 }

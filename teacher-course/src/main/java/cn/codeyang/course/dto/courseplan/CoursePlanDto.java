@@ -13,6 +13,8 @@ public class CoursePlanDto implements Serializable {
     private static final long serialVersionUID = -9007903338014645932L;
     private Long id;
 
+    private Integer dayOfWeek;
+
     private ClassInfo classInfo;
 
     private Teacher teacher;
@@ -22,4 +24,5 @@ public class CoursePlanDto implements Serializable {
     private TimeSlot timeSlot;
 
     private CourseType courseType;
+
 }
