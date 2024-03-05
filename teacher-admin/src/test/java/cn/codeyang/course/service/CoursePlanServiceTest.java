@@ -159,7 +159,7 @@ public class CoursePlanServiceTest {
         }
 
         // timeslot
-        TimeSlot timeSlot = timeSlotService.getBySortOfDay(numOfDay);
+        TimeSlot timeSlot = timeSlotService.getBySortInDay(numOfDay);
         if (timeSlot == null) {
             throw new Exception("找不到对应的时间段");
         }

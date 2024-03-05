@@ -25,6 +25,12 @@
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-test</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.optaplanner</groupId>
+            <artifactId>optaplanner-benchmark</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

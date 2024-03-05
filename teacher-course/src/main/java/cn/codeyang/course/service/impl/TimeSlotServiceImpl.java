@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TimeSlotServiceImpl extends ServiceImpl<TimeSlotMapper, TimeSlot> implements TimeSlotService {
     @Override
-    public TimeSlot getBySortOfDay(int sortOfDay) {
+    public TimeSlot getBySortInDay(int sortOfDay) {
         return this.baseMapper.selectOne(Wrappers.<TimeSlot>lambdaQuery()
-                .eq(TimeSlot::getSortOfDay, sortOfDay));
+                .eq(TimeSlot::getSortInDay, sortOfDay));
     }
 }

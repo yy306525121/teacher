@@ -29,7 +29,6 @@
 
         <association property="timeSlot" javaType="TimeSlot">
             <id property="id" column="time_slot_id"/>
-            <result property="dayOfWeek" column="day_of_week"/>
             <result property="sortOfDay" column="sort_of_day"/>
         </association>
 
@@ -57,7 +56,6 @@
                subject.name as subject_name,
                subject.sort as subject_sort,
                time_slot.id as time_slot_id,
-               time_slot.day_of_week as day_of_week,
                time_slot.sort_of_day as sort_of_day,
                course_type.id as course_type_id,
                course_type.name as course_type_name,

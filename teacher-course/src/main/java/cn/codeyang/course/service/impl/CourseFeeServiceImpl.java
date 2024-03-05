@@ -72,7 +72,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
         List<CoursePlanFilterDto> filter = new ArrayList<>();
         if (date.getDayOfMonth() == 26) {
             // 高三第九节课开始
-            filter.add(new CoursePlanFilterDto(1739967916475428866L, 9));
+            filter.add(new CoursePlanFilterDto(1739967916475428866L, 8));
         } else if (date.getDayOfMonth() == 27) {
             // 高三所有课
             filter.add(new CoursePlanFilterDto(1739967916475428866L, null));
@@ -109,7 +109,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
                 courseFee.setSubjectId(coursePlan.getSubject().getId());
             }
             courseFee.setWeek(coursePlan.getDayOfWeek());
-            courseFee.setNumInDay(coursePlan.getTimeSlot().getSortOfDay());
+            courseFee.setNumInDay(coursePlan.getTimeSlot().getSortInDay());
             courseFeeList.add(courseFee);
         }
 

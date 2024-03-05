@@ -1,12 +1,10 @@
 package cn.codeyang.web.controller.course;
 
 import cn.codeyang.common.core.domain.AjaxResult;
-import cn.codeyang.course.domain.CourseSetting;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
 import cn.codeyang.course.service.CoursePlanService;
-import cn.codeyang.course.service.CourseSettingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,61 +25,10 @@ import static cn.codeyang.common.core.domain.AjaxResult.success;
 @RequiredArgsConstructor
 public class CoursePlanController {
     private final CoursePlanService coursePlanService;
-    private final CourseSettingService courseSettingService;
 
     @PreAuthorize("@ss.hasPermi('course:courseplan:list')")
     @PostMapping("/list")
     public AjaxResult list(@RequestBody CoursePlanListRequest request) {
-        List<CoursePlanDto> list = coursePlanService.selectListByClassInfoId(request.getClassInfoId());
-        CourseSetting courseSetting = courseSettingService.getCurrent();
-        // 每天上几节课
-        int numEveryDay = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning() + courseSetting.getSizeOfAfternoon() + courseSetting.getSizeOfNight();
-
-        int timeFirst = courseSetting.getSizeOfMorningEarly();
-        int timeSecond = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning();
-        int timeThird = courseSetting.getSizeOfMorningEarly() + courseSetting.getSizeOfMorning() + courseSetting.getSizeOfAfternoon();
-
-        List<CoursePlanViewRspDto> rspDtoList = new ArrayList<>();
-
-        // 获取每天的第一节课
-        for (int i = 1; i <= numEveryDay; i++) {
-            int finalI = i;
-            log.info("获取每天的第{}节课", finalI);
-
-            int num = i;
-            CoursePlanViewRspDto dto = new CoursePlanViewRspDto();
-            if (i > 0 && i <= timeFirst) {
-                dto.setTime("早自习");
-            } else if (i > timeFirst && i <= timeSecond) {
-                dto.setTime("上午");
-                num = num - timeFirst;
-            } else if (i > timeSecond && i <= timeThird) {
-                num = num - timeSecond;
-                dto.setTime("下午");
-            } else if (i > timeThird) {
-                num = num - timeThird;
-                dto.setTime("夜自习");
-            }
-
-            List<CoursePlanDto> collect = list.stream().filter(item -> item.getTimeSlot().getSortOfDay() == finalI).collect(Collectors.toList());
-            // 周一
-            collect.stream().filter(item -> item.getDayOfWeek() == 1).findFirst().ifPresent(dto::setMonday);
-            // 周二
-            collect.stream().filter(item -> item.getDayOfWeek() == 2).findFirst().ifPresent(dto::setTuesday);
-            // 周三
-            collect.stream().filter(item -> item.getDayOfWeek() == 3).findFirst().ifPresent(dto::setWednesday);
-            // 周四
-            collect.stream().filter(item -> item.getDayOfWeek() == 4).findFirst().ifPresent(dto::setThursday);
-            // 周五
-            collect.stream().filter(item -> item.getDayOfWeek() == 5).findFirst().ifPresent(dto::setFriday);
-            // 周六
-            collect.stream().filter(item -> item.getDayOfWeek() == 6).findFirst().ifPresent(dto::setSaturday);
-            // 周末
-            collect.stream().filter(item -> item.getDayOfWeek() == 7).findFirst().ifPresent(dto::setSunday);
-            dto.setNumInDay(num);
-            rspDtoList.add(dto);
-        }
-
-        return success(rspDtoList);
+        return null;
     }
 }

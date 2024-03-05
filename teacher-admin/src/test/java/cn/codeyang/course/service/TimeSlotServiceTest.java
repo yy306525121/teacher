@@ -9,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.DayOfWeek;
-
 @ActiveProfiles("dev")
 @Slf4j
 @SpringBootTest
@@ -22,7 +20,7 @@ public class TimeSlotServiceTest {
     @Test
     public void saveTest() {
         TimeSlot entity = new TimeSlot();
-        entity.setSortOfDay(1);
+        entity.setSortInDay(1);
         timeSlotService.save(entity);
     }
 
