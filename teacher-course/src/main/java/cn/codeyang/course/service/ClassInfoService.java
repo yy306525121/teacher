@@ -15,4 +15,6 @@ public interface ClassInfoService extends IService<ClassInfo> {
     List<ClassInfo> list(ClassInfoListRequest request);
 
     List<ClassInfo> listByParentIdList(List<Long> classInfoIdList);
+
+    ClassInfo getOneByName(String className);
 }

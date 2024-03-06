@@ -47,6 +47,12 @@ public class ClassInfoServiceImpl extends ServiceImpl<ClassInfoMapper, ClassInfo
                 .in(ClassInfo::getParentId, classInfoIdList));
     }
 
+    @Override
+    public ClassInfo getOneByName(String className) {
+        return this.baseMapper.selectOne(Wrappers.<ClassInfo>lambdaQuery()
+                .eq(ClassInfo::getName, className));
+    }
+
     private Function<ClassInfo, TreeNode<Long>> getNodeFunction() {
         return classInfo -> {
             TreeNode<Long> node = new TreeNode<>();
