@@ -1,10 +1,10 @@
 package cn.codeyang.common.filter;
 
 import cn.codeyang.common.utils.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
 import java.io.IOException;
 
 /**

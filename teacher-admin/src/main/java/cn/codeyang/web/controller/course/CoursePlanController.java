@@ -7,12 +7,18 @@ import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
+import cn.codeyang.course.opta.domain.CoursePlanSolution;
+import cn.codeyang.course.opta.domain.CoursePlanWeek;
 import cn.codeyang.course.service.ClassInfoService;
 import cn.codeyang.course.service.CoursePlanService;
+import cn.codeyang.course.service.TimeSlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.solver.SolutionManager;
+import org.optaplanner.core.api.solver.SolverManager;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,8 +35,18 @@ import static cn.codeyang.common.core.domain.AjaxResult.success;
 @RequestMapping("/course/plan")
 @RequiredArgsConstructor
 public class CoursePlanController {
+    private final TimeSlotService timeSlotService;
     private final CoursePlanService coursePlanService;
     private ClassInfoService classInfoService;
+    private final SolverManager<CoursePlanSolution, Long> solverManager;
+    private final SolutionManager<CoursePlanSolution, HardSoftScore> solutionManager;
+
+
+    @PreAuthorize("@ss.hasPermi('course:coursePlan:solve')")
+    @PostMapping("/solve/{problemId}")
+    public void solve(@PathVariable("problemId") Long problemId) {
+        solverManager.solveAndListen(problemId, coursePlanService::selectProbjemById, coursePlanService::saveSolution);
+    }
 
     @PreAuthorize("@ss.hasPermi('course:coursePlan:list')")
     @PostMapping("/list")

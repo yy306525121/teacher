@@ -3,7 +3,7 @@ package cn.codeyang.framework.config;
 import cn.codeyang.common.utils.ServletUtils;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 服务相关配置

@@ -24,5 +24,5 @@ public class TimeSlot extends BaseEntity {
      */
     private Integer type;
 
-    private int sortInDay;
+    private Integer sortInDay;
 }

@@ -3,7 +3,7 @@ package cn.codeyang.common.utils.ip;
 import cn.codeyang.common.utils.ServletUtils;
 import cn.codeyang.common.utils.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
