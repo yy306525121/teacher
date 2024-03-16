@@ -53,7 +53,7 @@ public class SysDeptController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
     @GetMapping(value = "/{deptId}")
-    public AjaxResult getInfo(@PathVariable Long deptId) {
+    public AjaxResult getInfo(@PathVariable("deptId") Long deptId) {
         deptService.checkDeptDataScope(deptId);
         return success(deptService.selectDeptById(deptId));
     }
@@ -98,7 +98,7 @@ public class SysDeptController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dept:remove')")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
-    public AjaxResult remove(@PathVariable Long deptId) {
+    public AjaxResult remove(@PathVariable("deptId") Long deptId) {
         if (deptService.hasChildByDeptId(deptId)) {
             return warn("存在下级部门,不允许删除");
         }

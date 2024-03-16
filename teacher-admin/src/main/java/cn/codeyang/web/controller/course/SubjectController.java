@@ -72,7 +72,7 @@ public class SubjectController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('course:subject:list')")
     @GetMapping("/{id}")
-    public AjaxResult info(@PathVariable Long id) {
+    public AjaxResult info(@PathVariable("id") Long id) {
         return AjaxResult.success(subjectService.getById(id));
     }
 
@@ -82,7 +82,7 @@ public class SubjectController extends BaseController {
     @PreAuthorize("@ss.hasPermi('course:subject:remove')")
     @Log(title = "科目管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable List<Long> ids) {
+    public AjaxResult remove(@PathVariable("ids") List<Long> ids) {
         return toAjax(subjectService.removeByIds(ids));
     }
 

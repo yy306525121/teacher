@@ -57,7 +57,7 @@ public class TeacherController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('course.teacher.list')")
     @GetMapping("/info/{id}")
-    public AjaxResult info(@PathVariable Long id) {
+    public AjaxResult info(@PathVariable(value = "id") Long id) {
         return AjaxResult.success(teacherService.getInfo(id));
     }
 
@@ -67,7 +67,7 @@ public class TeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('course:teacher:remove')")
     @Log(title = "教师", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
+    public AjaxResult remove(@PathVariable(value = "ids") Long[] ids) {
         return toAjax(teacherService.removeByIds(Arrays.asList(ids)));
     }
 }
