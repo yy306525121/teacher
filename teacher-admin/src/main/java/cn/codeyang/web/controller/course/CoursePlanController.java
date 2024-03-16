@@ -1,9 +1,12 @@
 package cn.codeyang.web.controller.course;
 
 import cn.codeyang.common.core.domain.AjaxResult;
+import cn.codeyang.common.core.domain.entity.SysUser;
 import cn.codeyang.common.exception.file.FileUploadException;
+import cn.codeyang.common.utils.poi.ExcelUtil;
 import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
+import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
@@ -11,7 +14,10 @@ import cn.codeyang.course.opta.domain.CoursePlanSolution;
 import cn.codeyang.course.opta.domain.CoursePlanWeek;
 import cn.codeyang.course.service.ClassInfoService;
 import cn.codeyang.course.service.CoursePlanService;
+import cn.codeyang.course.service.SubjectService;
 import cn.codeyang.course.service.TimeSlotService;
+import cn.codeyang.course.utils.CoursePlanExcelUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +41,15 @@ import static cn.codeyang.common.core.domain.AjaxResult.success;
 @RequestMapping("/course/plan")
 @RequiredArgsConstructor
 public class CoursePlanController {
-    private final TimeSlotService timeSlotService;
     private final CoursePlanService coursePlanService;
-    private ClassInfoService classInfoService;
+    private final ClassInfoService classInfoService;
+    private final SubjectService subjectService;
+
     private final SolverManager<CoursePlanSolution, Long> solverManager;
     private final SolutionManager<CoursePlanSolution, HardSoftScore> solutionManager;
+
+    private static final String SUBJECT_ENGLISH = "英语";
+    private static final String SUBJECT_CHINESE = "语文";
 
 
     @PreAuthorize("@ss.hasPermi('course:coursePlan:solve')")
@@ -51,14 +61,35 @@ public class CoursePlanController {
     @PreAuthorize("@ss.hasPermi('course:coursePlan:list')")
     @PostMapping("/list")
     public AjaxResult list(@RequestBody CoursePlanListRequest request) {
-        return null;
+        Integer queryType = request.getQueryType();
+        if (queryType == 1) {
+            // 按班级查询
+            if (request.getClassInfoId() == null) {
+                return AjaxResult.error("请选择班级");
+            }
+            return success(coursePlanService.selectByClassInfoIdOrTeacherId(request.getClassInfoId(), null));
+        } else if (queryType == 2) {
+            // 按老师查询
+            if (request.getTeacherId() == null) {
+                return AjaxResult.error("请选择老师");
+            }
+            return success(coursePlanService.selectByClassInfoIdOrTeacherId(null, request.getTeacherId()));
+        } else {
+            return AjaxResult.error("查询类型错误");
+        }
     }
 
     @SneakyThrows
+    @PreAuthorize("@ss.hasPermi('course:coursePlan:import')")
+    @PostMapping("/import")
     public AjaxResult importCoursePlan(@RequestParam("file")MultipartFile file) {
         InputStream inputStream = file.getInputStream();
-
         Workbook workbook = WorkbookFactory.create(inputStream);
+
+        Subject subjectEnglish = subjectService.getByNameAndCreate(SUBJECT_ENGLISH);
+        Subject subjectChinese = subjectService.getByNameAndCreate(SUBJECT_CHINESE);
+
+        List<CoursePlan> importList = new ArrayList<>();
 
         //获取sheet数量
         int numberOfSheets = workbook.getNumberOfSheets();
@@ -67,41 +98,37 @@ public class CoursePlanController {
             String sheetName = workbook.getSheetName(i);
             ClassInfo classInfo = classInfoService.getOneByName(sheetName);
             if (classInfo == null) {
-                throw new FileUploadException("班级不存在");
+                throw new FileUploadException("班级" + sheetName + "不存在");
             }
 
             Sheet sheet = workbook.getSheetAt(i);
-            getSheetData(sheet, classInfo, 2, 1);
-        }
-
-        return null;
-    }
-
-    private List<CoursePlan> getSheetData(Sheet sheet, ClassInfo classInfo, int weekRowIndex, int sortInDayCellIndex) {
-        List<CoursePlan> coursePlanList = new ArrayList<>();
-
-        // 迭代每一行，从第三行开始（索引为2）
-        for (int rowIndex = weekRowIndex; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-            Row row = sheet.getRow(rowIndex);
-            // 如果行为空，则跳过
-            if (row == null) continue;
-            // 获取第二列的数据：第几节课
-            Cell sortInDayCell = row.getCell(sortInDayCellIndex);
-            String sortInDay = sortInDayCell != null ? sortInDayCell.getStringCellValue() : "";
-            // 迭代每一列，从第二列开始
-            for (int colIndex = sortInDayCellIndex + 1; colIndex < row.getLastCellNum(); colIndex++) {
-                Cell cell = row.getCell(colIndex);
-                if (cell != null) {
-                    Row headerRow = sheet.getRow(1);
-                    Cell headerCell = headerRow.getCell(colIndex);
-                    String week = headerCell != null ? headerCell.getStringCellValue() : "";
-
-                    // 获取课程信息并输出
-                    String course = cell.getStringCellValue();
+            List<CoursePlan> coursePlanList = CoursePlanExcelUtil.getSheetData(sheet, classInfo, 2, 1);
+            // 为当前的班级添加周一到周六的早自习课程
+            for (int j = 1; j < 7; j++) {
+                CoursePlan coursePlan = new CoursePlan();
+                coursePlan.setClassInfoId(classInfo.getId());
+                if (j % 2 == 1) {
+                    coursePlan.setSubjectId(subjectChinese.getId());
+                } else {
+                    coursePlan.setSubjectId(subjectEnglish.getId());
                 }
+                coursePlan.setTimeSlotId(1L);
+                coursePlan.setCourseTypeId(3);
+                coursePlan.setDayOfWeek(j);
+                coursePlanList.add(coursePlan);
             }
+            importList.addAll(coursePlanList);
         }
+        coursePlanService.saveBatch(importList);
 
-        return coursePlanList;
+        return AjaxResult.success("导入成功");
     }
+
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) {
+        // ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        // util.importTemplateExcel(response, "用户数据");
+    }
+
+
 }

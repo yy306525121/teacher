@@ -29,14 +29,14 @@
 
         <association property="timeSlot" javaType="TimeSlot">
             <id property="id" column="time_slot_id"/>
-            <result property="sortOfDay" column="sort_of_day"/>
+            <result property="sortInDay" column="sort_in_day"/>
         </association>
 
         <association property="courseType" javaType="CourseType">
             <id property="id" column="course_type_id"/>
             <result property="name" column="course_type_name"/>
             <result property="type" column="course_type_type"/>
-            <result property="coursePeriod" column="course_type_period"/>
+            <result property="price" column="course_price"/>
         </association>
     </resultMap>
 
@@ -56,11 +56,11 @@
                subject.name as subject_name,
                subject.sort as subject_sort,
                time_slot.id as time_slot_id,
-               time_slot.sort_of_day as sort_of_day,
+               time_slot.sort_in_day as sort_in_day,
                course_type.id as course_type_id,
                course_type.name as course_type_name,
                course_type.type as course_type_type,
-               course_type.course_period as course_type_period
+               course_type.price as course_price
         from t_course_plan course_plan
                  left join t_class_info class_info
                            on class_info.id = course_plan.class_info_id and class_info.del_flag = 0
@@ -73,11 +73,13 @@
 
     <select id="selectListByClassInfoId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
-        where course_plan.class_info_id = #{classInfoId} and course_plan.del_flag = 0
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and teacher.del_flag = 0 and subject.del_flag = 0 and time_slot.del_flag = 0 and course_type.del_flag = 0
+        and course_plan.class_info_id = #{classInfoId} and course_plan.del_flag = 0
     </select>
     <select id="selectListByWeekAndTeacherId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
-        where course_plan.day_of_week = #{week}
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and teacher.del_flag = 0 and subject.del_flag = 0 and time_slot.del_flag = 0 and course_type.del_flag = 0
+        and course_plan.day_of_week = #{week}
         <if test="teacherId != null and teacherId != ''">
             and teacher.id = #{teacherId}
         </if>
@@ -92,6 +94,16 @@
                 </if>
             </foreach>
             )
+        </if>
+    </select>
+    <select id="selectByClassInfoIdOrTeacherId" resultMap="BaseMapper">
+        <include refid="BaseSql"/>
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and (teacher.del_flag = 0 or teacher.del_flag is null) and (subject.del_flag = 0 or subject.del_flag is null) and time_slot.del_flag = 0 and course_type.del_flag = 0
+        <if test="teacherId != null and teacherId != ''">
+            and teacher.id = #{teacherId}
+        </if>
+        <if test="classInfoId != null and classInfoId != ''">
+            and class_info.id = #{classInfoId}
         </if>
     </select>
 

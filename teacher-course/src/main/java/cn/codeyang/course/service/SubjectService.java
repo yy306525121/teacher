@@ -11,4 +11,11 @@ public interface SubjectService extends IService<Subject> {
 
 
     Subject getByName(String name);
+
+    /**
+     * 获取课程信息，如果不存在就创建
+     * @param name
+     * @return
+     */
+    Subject getByNameAndCreate(String name);
 }

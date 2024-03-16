@@ -100,7 +100,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             }
 
             CourseFee courseFee = new CourseFee();
-            courseFee.setCount(coursePlan.getCourseType().getCoursePeriod());
+            courseFee.setCount(coursePlan.getCourseType().getPrice());
             courseFee.setDate(date);
             courseFee.setTeacherId(coursePlan.getTeacher().getId());
             courseFee.setClassInfoId(coursePlan.getClassInfo().getId());

@@ -24,4 +24,15 @@ public class SubjectServiceImpl extends ServiceImpl<SubjectMapper, Subject> impl
         return baseMapper.selectOne(Wrappers.<Subject>lambdaQuery()
                 .eq(Subject::getName, name));
     }
+
+    @Override
+    public Subject getByNameAndCreate(String name) {
+        Subject subject = getByName(name);
+        if (subject == null) {
+            subject = new Subject();
+            subject.setName(name);
+            save(subject);
+        }
+        return subject;
+    }
 }

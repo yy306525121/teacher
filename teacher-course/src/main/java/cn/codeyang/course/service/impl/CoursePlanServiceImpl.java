@@ -1,5 +1,6 @@
 package cn.codeyang.course.service.impl;
 
+import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanFilterDto;
@@ -12,6 +13,9 @@ import cn.codeyang.course.service.TimeSlotService;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,4 +85,11 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
         coursePlanSolution.setCoursePlanWeekList(weekList);
         return coursePlanSolution;
     }
+
+    @Override
+    public List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId) {
+        return baseMapper.selectByClassInfoIdOrTeacherId(classInfoId, teacherId);
+    }
+
+
 }

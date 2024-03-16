@@ -20,4 +20,12 @@ public interface CoursePlanService extends IService<CoursePlan> {
     void saveSolution(CoursePlanSolution coursePlanSolution);
 
     CoursePlanSolution selectProbjemById(Long problemId);
+
+    /**
+     * 通过班级或教师查询课程计划
+     * @param classInfoId
+     * @param teacherId
+     * @return
+     */
+    List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId);
 }

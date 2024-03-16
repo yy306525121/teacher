@@ -14,4 +14,6 @@ public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
     List<CoursePlanDto> selectListByWeekAndTeacherId(@Param("week") Integer week,
                                                      @Param("teacherId") Long teacherId,
                                                      @Param("coursePlanFilterList")List<CoursePlanFilterDto> coursePlanFilterList);
+
+    List<CoursePlanDto> selectByClassInfoIdOrTeacherId(@Param("classInfoId") Long classInfoId, @Param("teacherId") Long teacherId);
 }

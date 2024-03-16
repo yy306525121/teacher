@@ -110,4 +110,15 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
         }
         return baseMapper.selectListBySubjectName(subjectName, teacherIds);
     }
+
+    @Override
+    public Teacher getByNameAndCreate(String teacherName) {
+        Teacher teacher = getByName(teacherName);
+        if (teacher == null) {
+            teacher = new Teacher();
+            teacher.setName(teacherName);
+            save(teacher);
+        }
+        return teacher;
+    }
 }

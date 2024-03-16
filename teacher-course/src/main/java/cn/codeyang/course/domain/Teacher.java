@@ -22,7 +22,7 @@ public class Teacher extends BaseEntity {
      * 0-在职
      * 1-离职
      */
-    private String status;
+    private Integer status;
 
     /**
      * 基础工资

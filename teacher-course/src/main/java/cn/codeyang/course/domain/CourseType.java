@@ -20,5 +20,5 @@ public class CourseType extends BaseEntity {
 
     private Integer type;
 
-    private BigDecimal coursePeriod;
+    private BigDecimal price;
 }
