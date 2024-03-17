@@ -34,6 +34,13 @@ public class TeacherController extends BaseController {
         return success(result);
     }
 
+    @PreAuthorize("@ss.hasPermi('course:teacher:list')")
+    @PostMapping("/list")
+    public AjaxResult list() {
+        List<Teacher> teacherList = teacherService.list();
+        return success(teacherList);
+    }
+
 
     /**
      * 新增教师
