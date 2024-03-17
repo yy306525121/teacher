@@ -5,7 +5,7 @@
 <mapper namespace="cn.codeyang.course.mapper.CourseFeeMapper">
 
 
-    <select id="selectPageList" resultType="cn.codeyang.course.dto.lessonfee.CourseFeePageRspDto">
+    <select id="selectPageList" resultType="cn.codeyang.course.dto.coursefee.CourseFeePageRspDto">
         select t.teacher_id, teacher.name as teacher_name, t.lesson_count
         from (select teacher_id, sum(count) as lesson_count
               from t_course_fee
@@ -15,7 +15,7 @@
                  left join t_teacher teacher on teacher.id = t.teacher_id and teacher.del_flag = 0
         order by teacher.create_time desc
     </select>
-    <select id="selectListGroupByDate" resultType="cn.codeyang.course.dto.lessonfee.CourseFeeDetailRspDto">
+    <select id="selectListGroupByDate" resultType="cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto">
         select course_fee.date, sum(course_fee.count) as count
         from t_course_fee course_fee
         where course_fee.teacher_id = #{teacherId}

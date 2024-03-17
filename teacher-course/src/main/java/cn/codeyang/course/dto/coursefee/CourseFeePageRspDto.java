@@ -1,4 +1,4 @@
-package cn.codeyang.course.dto.lessonfee;
+package cn.codeyang.course.dto.coursefee;
 
 import lombok.Data;
 

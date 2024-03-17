@@ -1,6 +1,6 @@
 package cn.codeyang.course.service;
 
-import cn.codeyang.course.dto.lessonfee.CourseFeePageReqDto;
+import cn.codeyang.course.dto.coursefee.CourseFeePageReqDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

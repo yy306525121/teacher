@@ -1,8 +1,8 @@
 package cn.codeyang.course.mapper;
 
 import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.dto.lessonfee.CourseFeeDetailRspDto;
-import cn.codeyang.course.dto.lessonfee.CourseFeePageRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeePageRspDto;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;

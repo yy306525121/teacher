@@ -1,8 +1,8 @@
 package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.dto.lessonfee.CourseFeeDetailRspDto;
-import cn.codeyang.course.dto.lessonfee.CourseFeePageRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeePageRspDto;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;

@@ -2,9 +2,8 @@ package cn.codeyang.web.controller.course;
 
 import cn.codeyang.common.core.controller.BaseController;
 import cn.codeyang.common.core.domain.AjaxResult;
-import cn.codeyang.course.dto.lessonfee.*;
+import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
