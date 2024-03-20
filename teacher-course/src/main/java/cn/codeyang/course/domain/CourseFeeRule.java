@@ -22,7 +22,7 @@ public class CourseFeeRule extends BaseEntity {
 
     /** 班级ID */
     @Excel(name = "班级ID")
-    private Long classInfoId;
+    private String classInfoId;
 
     /** 开始日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")

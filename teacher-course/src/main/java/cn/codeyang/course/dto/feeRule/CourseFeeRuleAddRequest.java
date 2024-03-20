@@ -15,7 +15,7 @@ public class CourseFeeRuleAddRequest implements Serializable {
     @NotNull(message = "规则类型不能为空")
     private Integer type;
 
-    private Long classInfoId;
+    private String classInfoId;
 
     private LocalDate startDate;
 
