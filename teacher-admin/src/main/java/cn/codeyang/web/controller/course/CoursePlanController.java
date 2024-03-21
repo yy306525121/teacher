@@ -7,15 +7,13 @@ import cn.codeyang.common.utils.poi.ExcelUtil;
 import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.Subject;
+import cn.codeyang.course.domain.TeacherSubject;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
 import cn.codeyang.course.opta.domain.CoursePlanSolution;
 import cn.codeyang.course.opta.domain.CoursePlanWeek;
-import cn.codeyang.course.service.ClassInfoService;
-import cn.codeyang.course.service.CoursePlanService;
-import cn.codeyang.course.service.SubjectService;
-import cn.codeyang.course.service.TimeSlotService;
+import cn.codeyang.course.service.*;
 import cn.codeyang.course.utils.CoursePlanExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +42,7 @@ public class CoursePlanController {
     private final CoursePlanService coursePlanService;
     private final ClassInfoService classInfoService;
     private final SubjectService subjectService;
+    private final TeacherSubjectService teacherSubjectService;
 
     private final SolverManager<CoursePlanSolution, Long> solverManager;
     private final SolutionManager<CoursePlanSolution, HardSoftScore> solutionManager;
@@ -89,6 +88,8 @@ public class CoursePlanController {
         Subject subjectEnglish = subjectService.getByNameAndCreate(SUBJECT_ENGLISH);
         Subject subjectChinese = subjectService.getByNameAndCreate(SUBJECT_CHINESE);
 
+        List<TeacherSubject> teacherSubjectList = teacherSubjectService.list();
+
         List<CoursePlan> importList = new ArrayList<>();
 
         //获取sheet数量
@@ -103,6 +104,17 @@ public class CoursePlanController {
 
             Sheet sheet = workbook.getSheetAt(i);
             List<CoursePlan> coursePlanList = CoursePlanExcelUtil.getSheetData(sheet, classInfo, 2, 1);
+
+            for (CoursePlan coursePlan : coursePlanList) {
+                // 检查教师和课程的关联关系
+                if (coursePlan.getTeacherId() != null && coursePlan.getSubjectId() != null) {
+                    if (teacherSubjectList.stream().noneMatch(item -> item.getTeacherId().equals(coursePlan.getTeacherId()) && item.getSubjectId().equals(coursePlan.getSubjectId()))) {
+
+                    }
+                }
+            }
+
+
             // 为当前的班级添加周一到周六的早自习课程
             for (int j = 1; j < 7; j++) {
                 CoursePlan coursePlan = new CoursePlan();
