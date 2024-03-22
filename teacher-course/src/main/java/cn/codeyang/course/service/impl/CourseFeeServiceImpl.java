@@ -1,18 +1,14 @@
 package cn.codeyang.course.service.impl;
 
 import cn.codeyang.course.constant.CourseConstant;
-import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.domain.Subject;
-import cn.codeyang.course.domain.Teacher;
+import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanFilterDto;
 import cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto;
 import cn.codeyang.course.dto.coursefee.CourseFeePageRspDto;
+import cn.codeyang.course.dto.feeRule.CourseFeeRulePageResponse;
 import cn.codeyang.course.mapper.CourseFeeMapper;
-import cn.codeyang.course.service.CourseFeeService;
-import cn.codeyang.course.service.CoursePlanService;
-import cn.codeyang.course.service.SubjectService;
-import cn.codeyang.course.service.TeacherService;
+import cn.codeyang.course.service.*;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -23,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +29,8 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
     private final CoursePlanService coursePlanService;
     private final TeacherService teacherService;
     private final SubjectService subjectService;
+    private final CourseFeeRuleService courseFeeRuleService;
+    private final TimeSlotService timeSlotService;
 
 
     @Override
@@ -44,11 +43,13 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
         // 1. 清除原有数据
         this.baseMapper.delete(Wrappers.<CourseFee>lambdaQuery().ge(CourseFee::getDate, start).le(CourseFee::getDate, end).eq(teacherId != null, CourseFee::getTeacherId, teacherId));
 
+        List<CourseFeeRulePageResponse> feeRuleList = courseFeeRuleService.selectFeeRuleList(start);
+
         // 2.开始计算课时费
         LocalDate current = start;
         List<CourseFee> coursePlanList = new ArrayList<>();
         while (!current.isAfter(end)) {
-            coursePlanList.addAll(calculate(teacherId, current));
+            coursePlanList.addAll(calculate(teacherId, current, feeRuleList));
             // 下一天
             current = current.plus(1, ChronoUnit.DAYS);
         }
@@ -66,7 +67,29 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
      *
      * @param date
      */
-    private List<CourseFee> calculate(Long teacherId, LocalDate date) {
+    private List<CourseFee> calculate(Long teacherId, LocalDate date, List<CourseFeeRulePageResponse> feeRuleList) {
+        List<CoursePlan> ignoreCoursePlanList = new ArrayList<>();
+
+        if (CollUtil.isNotEmpty(feeRuleList)) {
+            //开始日期为空，默认开始时间为为规则所在月的第一天的第一节课
+            TimeSlot firstTimeSlot = timeSlotService.getFirst();
+            TimeSlot lastTimeSlot = timeSlotService.getLast();
+
+            for (CourseFeeRulePageResponse feeRule : feeRuleList) {
+                if (feeRule.getStartDate() == null && feeRule.getEndDate() == null) {
+                    throw new RuntimeException("规则: " + feeRule.getId() + "有误");
+                }
+                if (feeRule.getStartDate() == null) {
+                    feeRule.setStartDate(feeRule.getEndDate().with(TemporalAdjusters.firstDayOfMonth()));
+                    feeRule.setStartTimeSlotId(firstTimeSlot.getId());
+                } else if (feeRule.getEndDate() == null) {
+                    feeRule.setEndDate(feeRule.getStartDate().with(TemporalAdjusters.lastDayOfMonth()));
+                    feeRule.setEndTimeSlotId(lastTimeSlot.getId());
+                }
+
+                // 生成需要排除的课程
+            }
+        }
         int week = date.getDayOfWeek().getValue();
         // 1. 查询指定周下的所有课程计划
         List<CoursePlanFilterDto> filter = new ArrayList<>();

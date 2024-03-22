@@ -89,6 +89,7 @@ public class CoursePlanController {
         Subject subjectChinese = subjectService.getByNameAndCreate(SUBJECT_CHINESE);
 
         List<TeacherSubject> teacherSubjectList = teacherSubjectService.list();
+        List<TeacherSubject> toSaveList = new ArrayList<>();
 
         List<CoursePlan> importList = new ArrayList<>();
 
@@ -109,7 +110,10 @@ public class CoursePlanController {
                 // 检查教师和课程的关联关系
                 if (coursePlan.getTeacherId() != null && coursePlan.getSubjectId() != null) {
                     if (teacherSubjectList.stream().noneMatch(item -> item.getTeacherId().equals(coursePlan.getTeacherId()) && item.getSubjectId().equals(coursePlan.getSubjectId()))) {
-
+                        TeacherSubject teacherSubject = new TeacherSubject();
+                        teacherSubject.setTeacherId(coursePlan.getTeacherId());
+                        teacherSubject.setSubjectId(coursePlan.getSubjectId());
+                        toSaveList.add(teacherSubject);
                     }
                 }
             }
@@ -131,6 +135,8 @@ public class CoursePlanController {
             }
             importList.addAll(coursePlanList);
         }
+
+        teacherSubjectService.saveBatch(toSaveList);
         coursePlanService.saveBatch(importList);
 
         return AjaxResult.success("导入成功");
