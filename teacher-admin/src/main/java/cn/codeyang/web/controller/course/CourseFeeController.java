@@ -1,11 +1,14 @@
 package cn.codeyang.web.controller.course;
 
+import cn.codeyang.common.annotation.Log;
 import cn.codeyang.common.core.controller.BaseController;
 import cn.codeyang.common.core.domain.AjaxResult;
+import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
 import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,10 +75,17 @@ public class CourseFeeController extends BaseController {
         for (CourseFeeDetailRspDto dto : rspList) {
             data.put(dto.getDate(), dto.getCount());
         }
-
         rsp.put("data", data);
         rsp.put("start", start);
         rsp.put("end", end);
         return success(rsp);
+    }
+
+
+    @Log(title = "登录日志", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('course:fee:export')")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, CourseFeePageReqDto request) {
+
     }
 }

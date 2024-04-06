@@ -73,12 +73,12 @@
 
     <select id="selectListByClassInfoId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
-        where course_plan.del_flag = 0 and class_info.del_flag = 0 and teacher.del_flag = 0 and subject.del_flag = 0 and time_slot.del_flag = 0 and course_type.del_flag = 0
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and (teacher.del_flag = 0 or teacher.del_flag is null) and (subject.del_flag = 0 or subject.del_flag is null) and time_slot.del_flag = 0 and course_type.del_flag = 0
         and course_plan.class_info_id = #{classInfoId} and course_plan.del_flag = 0
     </select>
     <select id="selectListByWeekAndTeacherId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
-        where course_plan.del_flag = 0 and class_info.del_flag = 0 and teacher.del_flag = 0 and subject.del_flag = 0 and time_slot.del_flag = 0 and course_type.del_flag = 0
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and (teacher.del_flag = 0 or teacher.del_flag is null) and (subject.del_flag = 0 or subject.del_flag is null) and time_slot.del_flag = 0 and course_type.del_flag = 0
         and course_plan.day_of_week = #{week}
         <if test="teacherId != null and teacherId != ''">
             and teacher.id = #{teacherId}

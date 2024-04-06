@@ -1,25 +1,25 @@
 package cn.codeyang.web.controller.course;
 
 import cn.codeyang.common.core.domain.AjaxResult;
-import cn.codeyang.common.core.domain.entity.SysUser;
 import cn.codeyang.common.exception.file.FileUploadException;
-import cn.codeyang.common.utils.poi.ExcelUtil;
 import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.domain.TeacherSubject;
-import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
-import cn.codeyang.course.dto.courseplan.CoursePlanViewRspDto;
 import cn.codeyang.course.opta.domain.CoursePlanSolution;
-import cn.codeyang.course.opta.domain.CoursePlanWeek;
-import cn.codeyang.course.service.*;
+import cn.codeyang.course.service.ClassInfoService;
+import cn.codeyang.course.service.CoursePlanService;
+import cn.codeyang.course.service.SubjectService;
+import cn.codeyang.course.service.TeacherSubjectService;
 import cn.codeyang.course.utils.CoursePlanExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolutionManager;
 import org.optaplanner.core.api.solver.SolverManager;
@@ -30,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static cn.codeyang.common.core.domain.AjaxResult.success;
 
@@ -110,6 +109,9 @@ public class CoursePlanController {
                 // 检查教师和课程的关联关系
                 if (coursePlan.getTeacherId() != null && coursePlan.getSubjectId() != null) {
                     if (teacherSubjectList.stream().noneMatch(item -> item.getTeacherId().equals(coursePlan.getTeacherId()) && item.getSubjectId().equals(coursePlan.getSubjectId()))) {
+                        if (toSaveList.stream().anyMatch(item -> item.getTeacherId().equals(coursePlan.getTeacherId()) && item.getSubjectId().equals(coursePlan.getSubjectId()))) {
+                            continue;
+                        }
                         TeacherSubject teacherSubject = new TeacherSubject();
                         teacherSubject.setTeacherId(coursePlan.getTeacherId());
                         teacherSubject.setSubjectId(coursePlan.getSubjectId());

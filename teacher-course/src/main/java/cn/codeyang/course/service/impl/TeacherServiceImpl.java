@@ -1,6 +1,5 @@
 package cn.codeyang.course.service.impl;
 
-import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.Teacher;
 import cn.codeyang.course.domain.TeacherSubject;
@@ -98,13 +97,11 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
     }
 
     @Override
-    public List<Teacher> selectListBySubjectName(String subjectName, List<Long> classInfoIdList) {
+    public List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList) {
         List<Long> teacherIds = new ArrayList<>();
 
-        if (CollUtil.isNotEmpty(classInfoIdList)) {
-            List<ClassInfo> classInfoList = classInfoService.listByParentIdList(classInfoIdList);
-            classInfoIdList = classInfoList.stream().map(ClassInfo::getId).collect(Collectors.toList());
-            List<CoursePlan> coursePlanList = coursePlanService.selectListByClassInfoIdList(classInfoIdList);
+        if (CollUtil.isNotEmpty(level2ClassInfoIdList)) {
+            List<CoursePlan> coursePlanList = coursePlanService.selectListByClassInfoIdList(level2ClassInfoIdList);
             teacherIds = coursePlanList.stream().map(CoursePlan::getTeacherId)
                     .filter(Objects::nonNull).distinct().collect(Collectors.toList());
         }

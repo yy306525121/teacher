@@ -1,7 +1,10 @@
 package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.Teacher;
-import cn.codeyang.course.dto.teacher.*;
+import cn.codeyang.course.dto.teacher.TeacherAddRequest;
+import cn.codeyang.course.dto.teacher.TeacherInfoRspDto;
+import cn.codeyang.course.dto.teacher.TeacherPageRequest;
+import cn.codeyang.course.dto.teacher.TeacherUpdateRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,7 +23,7 @@ public interface TeacherService extends IService<Teacher> {
 
     Teacher getByName(String name);
 
-    List<Teacher> selectListBySubjectName(String subjectName, List<Long> classInfoIdList);
+    List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList);
 
     Teacher getByNameAndCreate(String teacherName);
 }

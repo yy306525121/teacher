@@ -32,4 +32,14 @@ public class CourseConstant {
      * 正常课时
      */
     public static final BigDecimal NORMAL_FEE = new BigDecimal("1");
+
+    /**
+     * 早自习的courseType值
+     */
+    public static final Integer COURSE_TYPE_MORNING = 3;
+
+    /**
+     * timeSlot 早自习type值
+     */
+    public static final Integer TIME_SLOT_TYPE_MORNING = 1;
 }

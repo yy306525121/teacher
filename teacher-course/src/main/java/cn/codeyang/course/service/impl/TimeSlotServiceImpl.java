@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TimeSlotServiceImpl extends ServiceImpl<TimeSlotMapper, TimeSlot> implements TimeSlotService {
     @Override
@@ -22,5 +24,15 @@ public class TimeSlotServiceImpl extends ServiceImpl<TimeSlotMapper, TimeSlot> i
     @Override
     public TimeSlot getLast() {
         return this.baseMapper.selectOne(Wrappers.<TimeSlot>lambdaQuery().orderByDesc(TimeSlot::getSortInDay).last("limit 1"));
+    }
+
+    @Override
+    public List<TimeSlot> listOrderBySortAsc() {
+        return baseMapper.selectList(Wrappers.<TimeSlot>lambdaQuery().orderByAsc(TimeSlot::getSortInDay));
+    }
+
+    @Override
+    public List<TimeSlot> getByType(Integer type) {
+        return baseMapper.selectList(Wrappers.<TimeSlot>lambdaQuery().eq(TimeSlot::getType, type));
     }
 }
