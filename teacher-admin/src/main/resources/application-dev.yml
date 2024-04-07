@@ -192,3 +192,6 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 
+fee:
+  export-write-path: /Users/yangzy/desktop
+

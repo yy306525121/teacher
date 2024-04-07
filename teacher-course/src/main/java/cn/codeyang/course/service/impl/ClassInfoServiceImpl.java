@@ -4,6 +4,7 @@ import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.dto.classinfo.ClassInfoListRequest;
 import cn.codeyang.course.mapper.ClassInfoMapper;
 import cn.codeyang.course.service.ClassInfoService;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
 import cn.hutool.core.lang.tree.TreeUtil;
@@ -57,7 +58,7 @@ public class ClassInfoServiceImpl extends ServiceImpl<ClassInfoMapper, ClassInfo
     public List<ClassInfo> listLevel2ByNotIn(List<Long> classInfoIdList) {
         return baseMapper.selectList(Wrappers.<ClassInfo>lambdaQuery()
                 .ne(ClassInfo::getParentId, 0)
-                .notIn(ClassInfo::getId, classInfoIdList));
+                .notIn(CollUtil.isNotEmpty(classInfoIdList), ClassInfo::getId, classInfoIdList));
     }
 
     private Function<ClassInfo, TreeNode<Long>> getNodeFunction() {

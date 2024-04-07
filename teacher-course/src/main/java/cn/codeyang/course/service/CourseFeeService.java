@@ -2,6 +2,7 @@ package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.CourseFee;
 import cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeeExportRspDTO;
 import cn.codeyang.course.dto.coursefee.CourseFeePageRspDto;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,4 +23,6 @@ public interface CourseFeeService extends IService<CourseFee> {
     void calculate(Long teacherId, LocalDate start, LocalDate end);
 
     List<CourseFeeDetailRspDto> selectListGroupByDate(Long teacherId, LocalDate start, LocalDate end);
+
+    List<CourseFeeExportRspDTO> selectExportList(LocalDate start, LocalDate end);
 }

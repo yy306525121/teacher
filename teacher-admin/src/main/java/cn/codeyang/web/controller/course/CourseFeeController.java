@@ -7,27 +7,34 @@ import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/course/fee")
 @RequiredArgsConstructor
 public class CourseFeeController extends BaseController {
     private final CourseFeeService courseFeeService;
+
+    @Value("${fee.export-write-path}")
+    private String exportWritePath;
 
 
     @PreAuthorize("@ss.hasPermi('course:fee:list')")
@@ -85,7 +92,51 @@ public class CourseFeeController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('course:fee:export')")
     @PostMapping("/export")
-    public void export(HttpServletResponse response, CourseFeePageReqDto request) {
+    public void export(HttpServletResponse response, CourseFeeExportReqDTO request) throws IOException {
+        LocalDate date = request.getDate();
+        LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
+        List<CourseFeeExportRspDTO> dataList = courseFeeService.selectExportList(start, end);
 
+
+        ExcelWriter writer = ExcelUtil.getWriter();
+        List<Map<String, Object>> dataMap = buildData(date, dataList);
+
+        writer.write(dataMap, true);
+        writer.flush(response.getOutputStream());
+        writer.close();
     }
+
+    private List<Map<String, Object>> buildData(LocalDate date, List<CourseFeeExportRspDTO> dataList) {
+        Map<String, List<CourseFeeExportRspDTO>> collect = dataList.stream().collect(Collectors.groupingBy(this::fetchGroupKey));
+
+        ArrayList<Map<String, Object>> rows = new ArrayList<>();
+        collect.forEach((key, list) -> {
+            String[] keySplit = key.split(StrUtil.DASHED);
+
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("年级", keySplit[0]);
+            row.put("教师", keySplit[1]);
+            LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
+            while (!start.isAfter(end)) {
+                LocalDate finalStart = start;
+                CourseFeeExportRspDTO dataItem = dataList.stream().filter(item -> item.getClassName().equals(keySplit[0]) && item.getTeacherName().equals(keySplit[1]) && finalStart.equals(item.getDate())).findFirst().orElse(null);
+                if (dataItem != null) {
+                    row.put(start.getDayOfMonth() + "", dataItem.getCount());
+                } else {
+                    row.put(start.getDayOfMonth() + "", "");
+                }
+                start = start.plusDays(1);
+            }
+            rows.add(row);
+        });
+
+        return rows;
+    }
+
+    private String fetchGroupKey(CourseFeeExportRspDTO e) {
+        return e.getClassName() + StrUtil.DASHED + e.getTeacherName();
+    }
+
 }

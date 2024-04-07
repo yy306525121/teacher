@@ -23,4 +23,18 @@
         group by course_fee.date
         order by course_fee.date
     </select>
+    <select id="selectExportList" resultType="cn.codeyang.course.dto.coursefee.CourseFeeExportRspDTO">
+        select course_fee.date as date,
+               sum(course_fee.count) as count,
+               ifnull(class_top_info.name, '早自习') as class_name,
+               teacher.name as teacher_name
+        from t_course_fee course_fee
+                 left join t_class_info class_info on class_info.id = course_fee.class_info_id
+                 left join t_class_info class_top_info on class_top_info.id = class_info.parent_id
+                 left join t_subject subject on subject.id = course_fee.subject_id
+                 left join t_teacher teacher on teacher.id = course_fee.teacher_id
+        where course_fee.date between #{start} and #{end}
+        group by teacher.name, class_top_info.name, course_fee.date
+        order by teacher.name, course_fee.date
+    </select>
 </mapper>

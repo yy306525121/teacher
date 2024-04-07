@@ -3,6 +3,7 @@ package cn.codeyang.course.service.impl;
 import cn.codeyang.course.constant.CourseConstant;
 import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.coursefee.CourseFeeDetailRspDto;
+import cn.codeyang.course.dto.coursefee.CourseFeeExportRspDTO;
 import cn.codeyang.course.dto.coursefee.CourseFeePageRspDto;
 import cn.codeyang.course.dto.coursefee.IgnoreItemDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
@@ -69,6 +70,11 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
     @Override
     public List<CourseFeeDetailRspDto> selectListGroupByDate(Long teacherId, LocalDate start, LocalDate end) {
         return baseMapper.selectListGroupByDate(teacherId, start, end);
+    }
+
+    @Override
+    public List<CourseFeeExportRspDTO> selectExportList(LocalDate start, LocalDate end) {
+        return baseMapper.selectExportList(start, end);
     }
 
 
@@ -187,7 +193,8 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
     private List<ClassInfo> getLevel2ClassIdListNotInIgnore(List<IgnoreItemDto> ignoreItemList) {
         List<ClassInfo> list = new ArrayList<>(0);
         if (CollUtil.isEmpty(ignoreItemList)) {
-            return list;
+            // 如果不需要排除， 查询所有的二级班级
+            return classInfoService.listLevel2ByNotIn(null);
         }
 
         // 这里的班级都是一级班级的ID
@@ -208,9 +215,6 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
         List<CourseFee> courseFeeList = new ArrayList<>();
         for (TimeSlot timeSlot : timeSlotMorning) {
             List<IgnoreItemDto> matchIgnoreItemList = ignoreItemList.stream().filter(item -> item.getDate().equals(date) && item.getTimeSlotId().equals(timeSlot.getId())).collect(Collectors.toList());
-            if (CollUtil.isEmpty(matchIgnoreItemList)) {
-                continue;
-            }
             List<ClassInfo> classInfoList = getLevel2ClassIdListNotInIgnore(matchIgnoreItemList);
             if (CollUtil.isEmpty(classInfoList)) {
                 continue;
