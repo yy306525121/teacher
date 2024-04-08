@@ -9,6 +9,7 @@ import cn.codeyang.course.domain.CourseFeeRule;
 import cn.codeyang.course.domain.TimeSlot;
 import cn.codeyang.course.dto.feeRule.CourseFeeRuleAddRequest;
 import cn.codeyang.course.dto.feeRule.CourseFeeRulePageResponse;
+import cn.codeyang.course.enums.CourseFeeRuleTypeEnum;
 import cn.codeyang.course.service.CourseFeeRuleService;
 import cn.codeyang.course.service.TimeSlotService;
 import jakarta.validation.Valid;
@@ -45,36 +46,61 @@ public class CourseFeeRuleController extends BaseController {
         CourseFeeRule courseFeeRule = new CourseFeeRule();
         courseFeeRule.setType(request.getType());
 
-        if (request.getStartDate() == null && request.getEndDate() == null) {
-            return error("开始日期和结束日期不能同时为空");
-        }
-        if (request.getStartDate() != null && request.getStartTimeSlotId() == null) {
-            return error("开始课程节次不能为空");
-        }
-        if (request.getEndDate() != null && request.getEndTimeSlotId() == null) {
-            return error("结束课程节次不能为空");
-        }
-
-        if (request.getStartDate() != null && request.getEndDate() != null) {
-            if (request.getStartDate().isAfter(request.getEndDate())) {
-                return error("开始日期不能大于结束日期");
+        if (request.getType().equals(CourseFeeRuleTypeEnum.CHANGE.getType())) {
+            // 调课
+            if (request.getOverrideDate() == null) {
+                return error("调课日期不能为空");
+            }
+            if (request.getOverrideTimeSlotId() == null) {
+                return error("调课节次不能为空");
+            }
+            if (request.getOverrideFromTeacherId() == null || request.getOverrideToTeacherId() == null) {
+                return error("调课教师不能为空");
+            }
+            if (request.getOverrideFromCourseTypeId() == null || request.getOverrideToCourseTypeId() == null) {
+                return error("调课课程类型不能为空");
             }
 
-            if (request.getStartDate().equals(request.getEndDate())) {
-                TimeSlot startTimeSlot = timeSlotService.getById(request.getStartTimeSlotId());
-                TimeSlot endTimeSlot = timeSlotService.getById(request.getEndTimeSlotId());
-                if (endTimeSlot.getSortInDay() <= startTimeSlot.getSortInDay()) {
-                    return error("结束课程节次必须大于开始课程节次");
+            courseFeeRule.setOverrideDate(request.getOverrideDate());
+            courseFeeRule.setOverrideTimeSlotId(request.getOverrideTimeSlotId());
+            courseFeeRule.setOverrideFromTeacherId(request.getOverrideFromTeacherId());
+            courseFeeRule.setOverrideToTeacherId(request.getOverrideToTeacherId());
+            courseFeeRule.setOverrideFromCourseTypeId(request.getOverrideFromCourseTypeId());
+            courseFeeRule.setOverrideToCourseTypeId(request.getOverrideToCourseTypeId());
+            courseFeeRule.setOverrideFromSubjectId(request.getOverrideFromSubjectId());
+            courseFeeRule.setOverrideToSubjectId(request.getOverrideToSubjectId());
+        } else {
+            if (request.getStartDate() == null && request.getEndDate() == null) {
+                return error("开始日期和结束日期不能同时为空");
+            }
+            if (request.getStartDate() != null && request.getStartTimeSlotId() == null) {
+                return error("开始课程节次不能为空");
+            }
+            if (request.getEndDate() != null && request.getEndTimeSlotId() == null) {
+                return error("结束课程节次不能为空");
+            }
+
+            if (request.getStartDate() != null && request.getEndDate() != null) {
+                if (request.getStartDate().isAfter(request.getEndDate())) {
+                    return error("开始日期不能大于结束日期");
+                }
+
+                if (request.getStartDate().equals(request.getEndDate())) {
+                    TimeSlot startTimeSlot = timeSlotService.getById(request.getStartTimeSlotId());
+                    TimeSlot endTimeSlot = timeSlotService.getById(request.getEndTimeSlotId());
+                    if (endTimeSlot.getSortInDay() <= startTimeSlot.getSortInDay()) {
+                        return error("结束课程节次必须大于开始课程节次");
+                    }
                 }
             }
-        }
 
-        courseFeeRule.setStartDate(request.getStartDate());
-        courseFeeRule.setStartTimeSlotId(request.getStartTimeSlotId());
-        courseFeeRule.setEndDate(request.getEndDate());
-        courseFeeRule.setEndTimeSlotId(request.getEndTimeSlotId());
-        if (request.getClassInfoId() != null) {
-            courseFeeRule.setClassInfoId(request.getClassInfoId());
+            courseFeeRule.setStartDate(request.getStartDate());
+            courseFeeRule.setStartTimeSlotId(request.getStartTimeSlotId());
+            courseFeeRule.setEndDate(request.getEndDate());
+            courseFeeRule.setEndTimeSlotId(request.getEndTimeSlotId());
+            if (request.getClassInfoId() != null) {
+                courseFeeRule.setClassInfoId(request.getClassInfoId());
+            }
         }
 
         return toAjax(courseFeeRuleService.save(courseFeeRule));

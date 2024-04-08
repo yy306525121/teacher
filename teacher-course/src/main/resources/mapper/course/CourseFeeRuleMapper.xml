@@ -38,9 +38,10 @@
                  left join t_time_slot end_time_slot on end_time_slot.id = fee_rule.end_time_slot_id
         <where>
             <if test="endDate != null and startDate != null">
-                     (fee_rule.start_date &lt;=#{endDate} and fee_rule.start_date &gt;=#{startDate})
-                or (fee_rule.end_date &lt;=#{endDate} and fee_rule.end_date &gt;=#{startDate})
+                     ((fee_rule.start_date &lt;=#{endDate} and fee_rule.start_date &gt;=#{startDate})
+                or (fee_rule.end_date &lt;=#{endDate} and fee_rule.end_date &gt;=#{startDate}))
             </if>
+            and fee_rule.type in (1, 2)
         </where>
         order by fee_rule.create_time desc
     </select>

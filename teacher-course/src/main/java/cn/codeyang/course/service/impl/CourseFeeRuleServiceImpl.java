@@ -3,6 +3,7 @@ package cn.codeyang.course.service.impl;
 import cn.codeyang.course.domain.CourseFeeRule;
 import cn.codeyang.course.dto.feeRule.CourseFeeRulePageRequest;
 import cn.codeyang.course.dto.feeRule.CourseFeeRulePageResponse;
+import cn.codeyang.course.enums.CourseFeeRuleTypeEnum;
 import cn.codeyang.course.mapper.CourseFeeRuleMapper;
 import cn.codeyang.course.service.CourseFeeRuleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,13 +29,7 @@ public class CourseFeeRuleServiceImpl extends ServiceImpl<CourseFeeRuleMapper, C
 
         LocalDate finalStartDate = startDate;
         LocalDate finalEndDate = endDate;
-        return baseMapper.selectPage(request.getPage(), Wrappers.<CourseFeeRule>lambdaQuery()
-                .lt(endDate != null, CourseFeeRule::getStartDate, endDate)
-                .or()
-                .ge(startDate != null, CourseFeeRule::getEndDate, startDate)
-                .or(date != null, i -> i.between(date != null, CourseFeeRule::getOverrideDate, finalStartDate, finalEndDate))
-                .orderByDesc(CourseFeeRule::getCreateTime)
-        );
+        return baseMapper.selectPage(request.getPage(), Wrappers.<CourseFeeRule>lambdaQuery().lt(endDate != null, CourseFeeRule::getStartDate, endDate).or().ge(startDate != null, CourseFeeRule::getEndDate, startDate).or(date != null, i -> i.between(date != null, CourseFeeRule::getOverrideDate, finalStartDate, finalEndDate)).orderByDesc(CourseFeeRule::getCreateTime));
     }
 
     @Override
@@ -47,5 +42,14 @@ public class CourseFeeRuleServiceImpl extends ServiceImpl<CourseFeeRuleMapper, C
             endDate = date.withDayOfMonth(date.lengthOfMonth());
         }
         return baseMapper.selectFeeRuleList(startDate, endDate);
+    }
+
+    @Override
+    public List<CourseFeeRule> selectChangeTypeList(LocalDate date) {
+        LocalDate startDate = date.withDayOfMonth(1);
+        LocalDate endDate = date.withDayOfMonth(date.lengthOfMonth());
+        return baseMapper.selectList(Wrappers.<CourseFeeRule>lambdaQuery()
+                .eq(CourseFeeRule::getType, CourseFeeRuleTypeEnum.CHANGE.getType())
+                .between(CourseFeeRule::getOverrideDate, startDate, endDate));
     }
 }

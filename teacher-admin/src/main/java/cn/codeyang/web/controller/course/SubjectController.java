@@ -39,7 +39,7 @@ public class SubjectController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('course:subject:list')")
     @PostMapping("/list")
-    public AjaxResult list(@RequestBody SubjectListRequest request) {
+    public AjaxResult list(@RequestBody(required = false) SubjectListRequest request) {
         List<Subject> list = subjectService.list(request.getName());
         return success(list);
     }

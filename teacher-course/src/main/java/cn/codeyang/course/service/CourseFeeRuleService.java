@@ -13,5 +13,12 @@ import java.util.List;
 public interface CourseFeeRuleService extends IService<CourseFeeRule> {
     IPage<CourseFeeRule> selectPageList(CourseFeeRulePageRequest request);
 
+    /**
+     * 查询放假和考试类型的规则
+     * @param date
+     * @return
+     */
     List<CourseFeeRulePageResponse> selectFeeRuleList(LocalDate date);
+
+    List<CourseFeeRule> selectChangeTypeList(LocalDate date);
 }

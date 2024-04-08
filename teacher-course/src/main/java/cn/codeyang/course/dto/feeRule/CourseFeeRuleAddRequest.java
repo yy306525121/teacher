@@ -28,11 +28,14 @@ public class CourseFeeRuleAddRequest implements Serializable {
 
     private Long overrideTimeSlotId;
 
-    private Long overrideTeacherId;
+    private Long overrideFromTeacherId;
+    private Long overrideToTeacherId;
 
-    private Long overrideSubjectId;
+    private Long overrideFromSubjectId;
+    private Long overrideToSubjectId;
 
-    private Long overrideCourseTypeId;
+    private Long overrideFromCourseTypeId;
+    private Long overrideToCourseTypeId;
 
 
 }

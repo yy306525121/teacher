@@ -50,9 +50,14 @@ public class CourseFeeRule extends BaseEntity {
     @Excel(name = "教师ID")
     private Long overrideTimeSlotId;
 
-    private Long overrideTeacherId;
+    private Long overrideFromTeacherId;
 
-    private Long overrideSubjectId;
+    private Long overrideToTeacherId;
 
-    private Long overrideCourseTypeId;
+    private Long overrideFromSubjectId;
+    private Long overrideToSubjectId;
+
+
+    private Long overrideFromCourseTypeId;
+    private Long overrideToCourseTypeId;
 }

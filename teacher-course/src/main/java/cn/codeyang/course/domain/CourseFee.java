@@ -27,7 +27,7 @@ public class CourseFee extends BaseEntity {
 
     private Integer week;
 
-    private Integer numInDay;
+    private Long timeSlotId;
 
     private LocalDate date;
 }

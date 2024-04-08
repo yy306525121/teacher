@@ -36,6 +36,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
     private final CourseFeeRuleService courseFeeRuleService;
     private final TimeSlotService timeSlotService;
     private final ClassInfoService classInfoService;
+    private final CourseTypeService courseTypeService;
 
 
 
@@ -46,6 +47,8 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
 
     @Override
     public void calculate(Long teacherId, LocalDate start, LocalDate end) {
+        List<CourseType> allCourseType = courseTypeService.selectAll();
+
         // 1. 清除原有数据
         this.baseMapper.delete(Wrappers.<CourseFee>lambdaQuery().ge(CourseFee::getDate, start).le(CourseFee::getDate, end).eq(teacherId != null, CourseFee::getTeacherId, teacherId));
 
@@ -55,16 +58,40 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             ignoreItemList = getIgnoreItem(feeRuleList);
         }
 
+        // 所有的调课规则
+        List<CourseFeeRule> changeFeeRuleList = courseFeeRuleService.selectChangeTypeList(start);
+
         // 2.开始计算课时费
         LocalDate current = start;
-        List<CourseFee> coursePlanList = new ArrayList<>();
+        List<CourseFee> courseFeeList = new ArrayList<>();
         while (!current.isAfter(end)) {
-            coursePlanList.addAll(calculate(teacherId, current, ignoreItemList));
+            courseFeeList.addAll(calculate(teacherId, current, ignoreItemList));
             // 下一天
             current = current.plus(1, ChronoUnit.DAYS);
         }
 
-        this.saveBatch(coursePlanList);
+        // 处理调课的课时
+        changeFeeRuleList.forEach(rule -> {
+            List<CourseFee> filterCourseFee = courseFeeList
+                    .stream()
+                    .filter(courseFee ->
+                            courseFee.getDate().equals(rule.getOverrideDate()) &&
+                                    courseFee.getTimeSlotId().equals(rule.getOverrideTimeSlotId()) &&
+                                    courseFee.getTeacherId().equals(rule.getOverrideFromTeacherId()))
+                    .collect(Collectors.toList());
+            if (filterCourseFee.size() > 1) {
+                throw new RuntimeException("课时费计算有误");
+            }
+            filterCourseFee.forEach(courseFee -> {
+                courseFee.setTeacherId(rule.getOverrideToTeacherId());
+                allCourseType
+                        .stream()
+                        .filter(courseType -> courseType.getId().equals(rule.getOverrideToCourseTypeId())).findFirst()
+                        .ifPresent(filterCourseType -> courseFee.setCount(filterCourseType.getPrice()));
+            });
+        });
+
+        this.saveBatch(courseFeeList);
     }
 
     @Override
@@ -183,7 +210,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
                 courseFee.setSubjectId(coursePlan.getSubject().getId());
             }
             courseFee.setWeek(coursePlan.getDayOfWeek());
-            courseFee.setNumInDay(coursePlan.getTimeSlot().getSortInDay());
+            courseFee.setTimeSlotId(coursePlan.getTimeSlot().getId());
             courseFeeList.add(courseFee);
         }
 
@@ -242,7 +269,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
                     courseFee.setSubjectId(subject.getId());
                 }
                 courseFee.setWeek(week);
-                courseFee.setNumInDay(1);
+                courseFee.setTimeSlotId(timeSlot.getId());
                 courseFee.setDate(date);
                 courseFeeList.add(courseFee);
             }
