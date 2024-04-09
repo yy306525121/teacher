@@ -6,6 +6,7 @@ import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.domain.Subject;
 import cn.codeyang.course.domain.TeacherSubject;
+import cn.codeyang.course.dto.courseplan.CoursePlanChangeRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanListRequest;
 import cn.codeyang.course.opta.domain.CoursePlanSolution;
 import cn.codeyang.course.service.ClassInfoService;
@@ -54,6 +55,18 @@ public class CoursePlanController {
     @PostMapping("/solve/{problemId}")
     public void solve(@PathVariable("problemId") Long problemId) {
         solverManager.solveAndListen(problemId, coursePlanService::selectProbjemById, coursePlanService::saveSolution);
+    }
+
+    /**
+     * 调整课程
+     * @param request
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('course:coursePlan:change')")
+    @PostMapping("/change")
+    public AjaxResult change(@RequestBody CoursePlanChangeRequest request) {
+        coursePlanService.change(request);
+        return AjaxResult.success();
     }
 
     @PreAuthorize("@ss.hasPermi('course:coursePlan:list')")

@@ -1,6 +1,7 @@
 package cn.codeyang.course.service;
 
 import cn.codeyang.course.domain.CoursePlan;
+import cn.codeyang.course.dto.courseplan.CoursePlanChangeRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanFilterDto;
 import cn.codeyang.course.opta.domain.CoursePlanSolution;
@@ -8,14 +9,21 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.lang.Nullable;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CoursePlanService extends IService<CoursePlan> {
     List<CoursePlanDto> selectListByClassInfoId(Long classInfoId);
 
-    List<CoursePlanDto> selectListByWeekAndTeacherId(Integer week, @Nullable Long teacherId, @Nullable List<CoursePlanFilterDto> filter);
+    List<CoursePlanDto> selectListByWeekAndTeacherId(Integer week, @Nullable Long teacherId, @Nullable List<CoursePlanFilterDto> filter, LocalDate date);
 
-    List<CoursePlan> selectListByClassInfoIdList(List<Long> classInfoIdList);
+    /**
+     * 查询指定日期，指定班级下的有效课程计划
+     * @param classInfoIdList
+     * @param date
+     * @return
+     */
+    List<CoursePlan> selectListByClassInfoIdList(List<Long> classInfoIdList, LocalDate date);
 
     void saveSolution(CoursePlanSolution coursePlanSolution);
 
@@ -28,4 +36,10 @@ public interface CoursePlanService extends IService<CoursePlan> {
      * @return
      */
     List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId);
+
+    /**
+     * 替换课程
+     * @param request
+     */
+    void change(CoursePlanChangeRequest request);
 }

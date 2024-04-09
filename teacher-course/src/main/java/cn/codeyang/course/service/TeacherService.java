@@ -8,6 +8,7 @@ import cn.codeyang.course.dto.teacher.TeacherUpdateRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TeacherService extends IService<Teacher> {
@@ -23,7 +24,14 @@ public interface TeacherService extends IService<Teacher> {
 
     Teacher getByName(String name);
 
-    List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList);
+    /**
+     * 查询指定班级、指定课程、指定日期内课程有效的教师
+     * @param subjectName 科目
+     * @param level2ClassInfoIdList 班级范围
+     * @param date 课程计划在该日期当天有效的数据
+     * @return
+     */
+    List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList, LocalDate date);
 
     Teacher getByNameAndCreate(String teacherName);
 }

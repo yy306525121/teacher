@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 
+import java.time.LocalDate;
+
 /**
  * 课程计划
  */
@@ -38,4 +40,8 @@ public class CoursePlan extends BaseEntity {
     private Integer courseTypeId;
 
     private Integer dayOfWeek;
+
+    private LocalDate start;
+
+    private LocalDate end;
 }

@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -97,11 +98,12 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
     }
 
     @Override
-    public List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList) {
+    public List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList, LocalDate date) {
         List<Long> teacherIds = new ArrayList<>();
 
         if (CollUtil.isNotEmpty(level2ClassInfoIdList)) {
-            List<CoursePlan> coursePlanList = coursePlanService.selectListByClassInfoIdList(level2ClassInfoIdList);
+            // 查询指定班级下的所有教师
+            List<CoursePlan> coursePlanList = coursePlanService.selectListByClassInfoIdList(level2ClassInfoIdList, date);
             teacherIds = coursePlanList.stream().map(CoursePlan::getTeacherId)
                     .filter(Objects::nonNull).distinct().collect(Collectors.toList());
         }

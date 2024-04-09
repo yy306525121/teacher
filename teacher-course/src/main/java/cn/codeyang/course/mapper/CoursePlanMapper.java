@@ -6,6 +6,7 @@ import cn.codeyang.course.dto.courseplan.CoursePlanFilterDto;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
@@ -13,7 +14,8 @@ public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
 
     List<CoursePlanDto> selectListByWeekAndTeacherId(@Param("week") Integer week,
                                                      @Param("teacherId") Long teacherId,
-                                                     @Param("coursePlanFilterList")List<CoursePlanFilterDto> coursePlanFilterList);
+                                                     @Param("coursePlanFilterList") List<CoursePlanFilterDto> coursePlanFilterList,
+                                                     @Param("date") String date);
 
     List<CoursePlanDto> selectByClassInfoIdOrTeacherId(@Param("classInfoId") Long classInfoId, @Param("teacherId") Long teacherId);
 }

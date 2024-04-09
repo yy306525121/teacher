@@ -95,10 +95,14 @@
             </foreach>
             )
         </if>
+        <if test="date != null and date != ''">
+            and course_plan.start &lt;= #{date} and course_plan.end &gt;= #{date}
+        </if>
     </select>
     <select id="selectByClassInfoIdOrTeacherId" resultMap="BaseMapper">
         <include refid="BaseSql"/>
         where course_plan.del_flag = 0 and class_info.del_flag = 0 and (teacher.del_flag = 0 or teacher.del_flag is null) and (subject.del_flag = 0 or subject.del_flag is null) and time_slot.del_flag = 0 and course_type.del_flag = 0
+        and course_plan.start &lt;= now() and course_plan.end &gt;= now()
         <if test="teacherId != null and teacherId != ''">
             and teacher.id = #{teacherId}
         </if>

@@ -176,7 +176,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
 
         int week = date.getDayOfWeek().getValue();
         // 1. 查询指定周下的所有课程计划
-        List<CoursePlanDto> coursePlans = coursePlanService.selectListByWeekAndTeacherId(week, teacherId, null);
+        List<CoursePlanDto> coursePlans = coursePlanService.selectListByWeekAndTeacherId(week, teacherId, null, date);
 
         List<CourseFee> courseFeeList = new ArrayList<>(coursePlans.size());
 
@@ -187,6 +187,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             courseFeeList.addAll(calculateMorningEarly(date, week, ignoreItemList));
         }
 
+        // 计算除早自习外的所有课时
         for (CoursePlanDto coursePlan : coursePlans) {
             if (coursePlan.getTeacher() == null) {
                 continue;
@@ -254,11 +255,11 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             if (CourseConstant.chineseMorningEarlyWeek.contains(week)) {
                 //语文早自习
                 subject = subjectService.getByName(CourseConstant.SUBJECT_CHINESE);
-                teacherList = teacherService.selectListBySubjectName(CourseConstant.SUBJECT_CHINESE, classInfoIdList);
+                teacherList = teacherService.selectListBySubjectName(CourseConstant.SUBJECT_CHINESE, classInfoIdList, date);
             } else if (CourseConstant.englishMorningEarlyWeek.contains(week)) {
                 // 英语早自习
                 subject = subjectService.getByName(CourseConstant.SUBJECT_ENGLISH);
-                teacherList = teacherService.selectListBySubjectName(CourseConstant.SUBJECT_ENGLISH, classInfoIdList);
+                teacherList = teacherService.selectListBySubjectName(CourseConstant.SUBJECT_ENGLISH, classInfoIdList, date);
             }
 
             for (Teacher teacher : teacherList) {
