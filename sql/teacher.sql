@@ -127,3 +127,66 @@ create table t_course_type
 )
     comment '课程类型表（正常课程、自习课、早自习）';
 
+
+
+
+-- auto-generated definition
+create table t_transfer_rule
+(
+    id                           bigint auto_increment comment 'ID'
+        primary key,
+    override_date                date                   null comment '调课时间',
+    override_time_slot_id        bigint                 null comment '调课节次',
+    override_from_teacher_id     bigint                 null comment '调课教师ID',
+    override_to_teacher_id       bigint                 null comment '调课教师ID',
+    override_from_subject_id     bigint                 null comment '调课课程',
+    override_to_subject_id       bigint                 null comment '调课课程',
+    override_from_course_type_id bigint                 null comment '调课课程类型',
+    override_to_course_type_id   bigint                 null comment '调课课程类型',
+    del_flag                     tinyint(1)  default 0  null comment '删除标志（0代表存在 1代表删除）',
+    create_by                    varchar(64) default '' null comment '创建者',
+    create_time                  datetime               null comment '创建时间',
+    update_by                    varchar(64) default '' null comment '更新者',
+    update_time                  datetime               null comment '更新时间'
+)
+    comment '调课规则表' collate = utf8mb4_unicode_ci;
+
+-- auto-generated definition
+create table t_exam_rule
+(
+    id                 bigint auto_increment comment 'ID'
+        primary key,
+    class_info_id      varchar(200)           null comment '班级ID的数组json',
+    start_date         date                   null comment '开始日期',
+    start_time_slot_id bigint                 null comment '开始节次',
+    end_date           date                   null comment '结束日期',
+    end_time_slot_id   bigint                 null comment '结束节次',
+    del_flag           tinyint(1)  default 0  null comment '删除标志（0代表存在 1代表删除）',
+    create_by          varchar(64) default '' null comment '创建者',
+    create_time        datetime               null comment '创建时间',
+    update_by          varchar(64) default '' null comment '更新者',
+    update_time        datetime               null comment '更新时间'
+)
+    comment '考试时间规则' collate = utf8mb4_unicode_ci;
+
+
+-- auto-generated definition
+create table t__rule
+(
+    id                 bigint auto_increment comment 'ID'
+        primary key,
+    class_info_id      varchar(200)           null comment '班级ID的数组json',
+    start_date         date                   null comment '开始日期',
+    start_time_slot_id bigint                 null comment '开始节次',
+    end_date           date                   null comment '结束日期',
+    end_time_slot_id   bigint                 null comment '结束节次',
+    del_flag           tinyint(1)  default 0  null comment '删除标志（0代表存在 1代表删除）',
+    create_by          varchar(64) default '' null comment '创建者',
+    create_time        datetime               null comment '创建时间',
+    update_by          varchar(64) default '' null comment '更新者',
+    update_time        datetime               null comment '更新时间'
+)
+    comment '放假时间规则' collate = utf8mb4_unicode_ci;
+
+
+
