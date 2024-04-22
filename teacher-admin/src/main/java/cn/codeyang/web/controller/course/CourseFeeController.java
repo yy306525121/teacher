@@ -125,7 +125,7 @@ public class CourseFeeController extends BaseController {
                 if (dataItem != null) {
                     row.put(start.getDayOfMonth() + "", dataItem.getCount());
                 } else {
-                    row.put(start.getDayOfMonth() + "", "");
+                    row.put(start.getDayOfMonth() + "", "0");
                 }
                 start = start.plusDays(1);
             }
