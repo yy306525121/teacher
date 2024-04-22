@@ -11,20 +11,13 @@ import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_course_fee_rule")
-public class CourseFeeRule extends BaseEntity {
+@TableName("t_exam_rule")
+public class ExamRule extends BaseEntity {
     private Long id;
 
-
-    /** 规则类型, 1-放假时间规则、2-考试规则、3-调课规则 */
-    @Excel(name = "规则类型, 1-放假规则、2-考试规则、3-调课规则")
-    private Integer type;
-
-    /** 班级ID */
     @Excel(name = "班级ID")
     private String classInfoId;
 
-    /** 开始日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "开始日期", width = 30, dateFormat = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -41,23 +34,4 @@ public class CourseFeeRule extends BaseEntity {
     /** 结束课时 */
     @Excel(name = "结束课时")
     private Long endTimeSlotId;
-
-    /** 教师ID */
-    @Excel(name = "教师ID")
-    private LocalDate overrideDate;
-
-    /** 教师ID */
-    @Excel(name = "教师ID")
-    private Long overrideTimeSlotId;
-
-    private Long overrideFromTeacherId;
-
-    private Long overrideToTeacherId;
-
-    private Long overrideFromSubjectId;
-    private Long overrideToSubjectId;
-
-
-    private Long overrideFromCourseTypeId;
-    private Long overrideToCourseTypeId;
 }

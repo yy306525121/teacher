@@ -6,6 +6,7 @@ import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -122,10 +123,11 @@ public class CourseFeeController extends BaseController {
             while (!start.isAfter(end)) {
                 LocalDate finalStart = start;
                 CourseFeeExportRspDTO dataItem = dataList.stream().filter(item -> item.getClassName().equals(keySplit[0]) && item.getTeacherName().equals(keySplit[1]) && finalStart.equals(item.getDate())).findFirst().orElse(null);
+                String dateStr = LocalDateTimeUtil.format(start, "MM-dd");
                 if (dataItem != null) {
-                    row.put(start.getDayOfMonth() + "", dataItem.getCount());
+                    row.put(dateStr, dataItem.getCount());
                 } else {
-                    row.put(start.getDayOfMonth() + "", "0");
+                    row.put(dateStr, "0");
                 }
                 start = start.plusDays(1);
             }
