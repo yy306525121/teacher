@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CourseTypeService extends IService<CourseType> {
     List<CourseType> selectAll();
+
+    CourseType selectByType(int type);
 }

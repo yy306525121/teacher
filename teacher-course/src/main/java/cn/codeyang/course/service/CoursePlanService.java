@@ -8,7 +8,6 @@ import cn.codeyang.course.opta.domain.CoursePlanSolution;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.lang.Nullable;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,4 +41,12 @@ public interface CoursePlanService extends IService<CoursePlan> {
      * @param request
      */
     void change(CoursePlanChangeRequest request);
+
+    /**
+     * 根据周数和课程类型查询当前日期有效的课程计划
+     * @param week 周
+     * @param type 课程类型
+     * @return
+     */
+    List<CoursePlan> selectListByWeekAndCourseType(LocalDate date, int week, Integer type);
 }

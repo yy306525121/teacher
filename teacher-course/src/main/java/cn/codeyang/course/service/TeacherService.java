@@ -34,4 +34,6 @@ public interface TeacherService extends IService<Teacher> {
     List<Teacher> selectListBySubjectName(String subjectName, List<Long> level2ClassInfoIdList, LocalDate date);
 
     Teacher getByNameAndCreate(String teacherName);
+
+    List<Teacher> getListBySubjectId(String subjectId);
 }

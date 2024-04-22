@@ -15,4 +15,10 @@ public class CourseTypeServiceImpl extends ServiceImpl<CourseTypeMapper, CourseT
     public List<CourseType> selectAll() {
         return baseMapper.selectList(Wrappers.<CourseType>lambdaQuery());
     }
+
+    @Override
+    public CourseType selectByType(int type) {
+        return baseMapper.selectOne(Wrappers.<CourseType>lambdaQuery()
+                .eq(CourseType::getType, type));
+    }
 }

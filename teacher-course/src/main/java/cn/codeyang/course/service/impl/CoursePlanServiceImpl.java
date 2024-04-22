@@ -1,6 +1,5 @@
 package cn.codeyang.course.service.impl;
 
-import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CoursePlan;
 import cn.codeyang.course.dto.courseplan.CoursePlanChangeRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
@@ -17,9 +16,6 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,6 +128,15 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
         // 修改原有课程计划
         this.saveOrUpdateBatch(originCoursePlanList);
         this.saveOrUpdateBatch(newCoursePlanList);
+    }
+
+    @Override
+    public List<CoursePlan> selectListByWeekAndCourseType(LocalDate date, int week, Integer type) {
+        return this.baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
+                .eq(CoursePlan::getDayOfWeek, week)
+                .eq(CoursePlan::getCourseTypeId, type)
+                .le(CoursePlan::getStart, date)
+                .ge(CoursePlan::getEnd, date));
     }
 
 
