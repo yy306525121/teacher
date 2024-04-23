@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 public class HolidayRuleServiceImpl extends ServiceImpl<HolidayRuleMapper, HolidayRule> implements HolidayRuleService {
@@ -21,6 +22,14 @@ public class HolidayRuleServiceImpl extends ServiceImpl<HolidayRuleMapper, Holid
         LocalDate endDate = searchDate.with(TemporalAdjusters.lastDayOfMonth());
 
         return baseMapper.selectPage(request.getPage(), Wrappers.<HolidayRule>lambdaQuery()
+                .between(HolidayRule::getStartDate, startDate, endDate)
+                .or()
+                .between(HolidayRule::getEndDate, startDate, endDate));
+    }
+
+    @Override
+    public List<HolidayRule> getListByDate(LocalDate startDate, LocalDate endDate) {
+        return baseMapper.selectList(Wrappers.<HolidayRule>lambdaQuery()
                 .between(HolidayRule::getStartDate, startDate, endDate)
                 .or()
                 .between(HolidayRule::getEndDate, startDate, endDate));

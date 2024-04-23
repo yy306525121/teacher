@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 public class ExamRuleServiceImpl extends ServiceImpl<ExamRuleMapper, ExamRule> implements ExamRuleService {
@@ -20,6 +21,14 @@ public class ExamRuleServiceImpl extends ServiceImpl<ExamRuleMapper, ExamRule> i
         LocalDate startDate = searchDate.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = searchDate.with(TemporalAdjusters.lastDayOfMonth());
         return baseMapper.selectPage(request.getPage(), Wrappers.<ExamRule>lambdaQuery()
+                .between(ExamRule::getStartDate, startDate, endDate)
+                .or()
+                .between(ExamRule::getEndDate, startDate, endDate));
+    }
+
+    @Override
+    public List<ExamRule> getListByDate(LocalDate startDate, LocalDate endDate) {
+        return baseMapper.selectList(Wrappers.<ExamRule>lambdaQuery()
                 .between(ExamRule::getStartDate, startDate, endDate)
                 .or()
                 .between(ExamRule::getEndDate, startDate, endDate));

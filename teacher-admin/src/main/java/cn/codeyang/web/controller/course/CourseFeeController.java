@@ -4,6 +4,7 @@ import cn.codeyang.common.annotation.Log;
 import cn.codeyang.common.core.controller.BaseController;
 import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.common.enums.BusinessType;
+import cn.codeyang.course.calculate.CourseFeeCalculateHandleChainService;
 import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
 import cn.hutool.core.date.LocalDateTimeUtil;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseFeeController extends BaseController {
     private final CourseFeeService courseFeeService;
+    private final CourseFeeCalculateHandleChainService courseFeeCalculateHandleChainService;
 
     @Value("${fee.export-write-path}")
     private String exportWritePath;
@@ -60,7 +62,7 @@ public class CourseFeeController extends BaseController {
         LocalDate date = request.getDate();
         LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
-        courseFeeService.calculate(request.getTeacherId(), start, end);
+        courseFeeCalculateHandleChainService.execute(start, end);
         return success();
     }
 

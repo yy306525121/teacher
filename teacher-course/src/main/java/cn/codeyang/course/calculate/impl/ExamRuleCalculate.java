@@ -3,11 +3,11 @@ package cn.codeyang.course.calculate.impl;
 import cn.codeyang.course.calculate.CourseFeeCalculate;
 import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.domain.HolidayRule;
+import cn.codeyang.course.domain.ExamRule;
 import cn.codeyang.course.domain.TimeSlot;
 import cn.codeyang.course.dto.coursefee.IgnoreItemDto;
 import cn.codeyang.course.service.ClassInfoService;
-import cn.codeyang.course.service.HolidayRuleService;
+import cn.codeyang.course.service.ExamRuleService;
 import cn.codeyang.course.service.TimeSlotService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -24,40 +24,37 @@ import java.util.List;
 /**
  * 放假规则计算
  */
-@Order(3)
+@Order(6)
 @Component
 @RequiredArgsConstructor
-public class HolidayCourseFeeCalculate implements CourseFeeCalculate {
-    private final HolidayRuleService holidayRuleService;
+public class ExamRuleCalculate implements CourseFeeCalculate {
+    private final ExamRuleService examRuleService;
     private final ClassInfoService classInfoService;
     private final TimeSlotService timeSlotService;
-    
+
     @Override
     public List<CourseFee> calculate(LocalDate startDate, LocalDate endDate, List<CourseFee> courseFeeList) {
-        List<HolidayRule> list = holidayRuleService.list();
+        List<ExamRule> list = examRuleService.getListByDate(startDate, endDate);
 
         // 获取放假的日期和节次
         List<IgnoreItemDto> ignoreItemList = getIgnoreItem(startDate, endDate, list);
 
         for (IgnoreItemDto ignoreItem : ignoreItemList) {
-            courseFeeList.removeIf(fee ->
-                    fee.getDate().equals(ignoreItem.getDate()) &&
-                    fee.getClassInfoId().equals(ignoreItem.getClassInfo().getId()) &&
-                    fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
+            courseFeeList.removeIf(fee -> fee.getDate().equals(ignoreItem.getDate()) && fee.getClassInfoId().equals(ignoreItem.getClassInfo().getId()) && fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
         }
 
         return courseFeeList;
     }
 
     @SneakyThrows
-    private List<IgnoreItemDto> getIgnoreItem(LocalDate startDate, LocalDate endDate, List<HolidayRule> ruleList) {
+    private List<IgnoreItemDto> getIgnoreItem(LocalDate startDate, LocalDate endDate, List<ExamRule> ruleList) {
         List<IgnoreItemDto> ignoreCoursePlanList = new ArrayList<>();
 
         List<ClassInfo> classInfoLevel2List = classInfoService.listByParentIdList(List.of(0L));
         TimeSlot firstTimeSlot = timeSlotService.getFirst();
         TimeSlot lastTimeSlot = timeSlotService.getLast();
 
-        for (HolidayRule rule : ruleList) {
+        for (ExamRule rule : ruleList) {
             if (rule.getStartDate() == null && rule.getEndDate() == null) {
                 throw new Exception("放假规则: " + rule.getId() + "有误");
             }

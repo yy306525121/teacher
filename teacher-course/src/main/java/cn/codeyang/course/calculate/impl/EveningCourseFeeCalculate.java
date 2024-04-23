@@ -20,21 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 正常课时计算
+ * 自习课课时计算
  * @author yangzy
  */
-@Order(2)
+@Order(4)
 @Component
 @RequiredArgsConstructor
-public class NormalCourseFeeCalculate implements CourseFeeCalculate {
+public class EveningCourseFeeCalculate implements CourseFeeCalculate {
     // 正常课时的type值
-    private static final int TYPE = CourseTypeEnum.NORMAL.getType();
+    private static final int TYPE = CourseTypeEnum.EVENING.getType();
 
     private final CourseTypeService courseTypeService;
     private final CoursePlanService coursePlanService;
 
     /**
-     * 正常课时课时费
+     * 自习课时课时费
      */
     private BigDecimal price;
 
@@ -52,13 +52,13 @@ public class NormalCourseFeeCalculate implements CourseFeeCalculate {
     public List<CourseFee> calculate(LocalDate startDate, LocalDate endDate, List<CourseFee> courseFeeList) {
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
-            courseFeeList.addAll(calculateNormal(currentDate));
+            courseFeeList.addAll(calculateStudySelf(currentDate));
             currentDate = currentDate.plus(1, ChronoUnit.DAYS);
         }
         return courseFeeList;
     }
 
-    private List<CourseFee> calculateNormal(LocalDate currentDate) {
+    private List<CourseFee> calculateStudySelf(LocalDate currentDate) {
         List<CourseFee> courseFeeList = new ArrayList<>();
 
         int week = currentDate.getDayOfWeek().getValue();
@@ -69,7 +69,6 @@ public class NormalCourseFeeCalculate implements CourseFeeCalculate {
             courseFee.setCount(price);
             courseFee.setTeacherId(coursePlan.getTeacherId());
             courseFee.setClassInfoId(coursePlan.getClassInfoId());
-            courseFee.setSubjectId(coursePlan.getSubjectId());
             courseFee.setWeek(week);
             courseFee.setTimeSlotId(coursePlan.getTimeSlotId());
             courseFee.setDate(currentDate);

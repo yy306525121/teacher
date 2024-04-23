@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 public class TransferRuleServiceImpl extends ServiceImpl<TransferRuleMapper, TransferRule> implements TransferRuleService {
@@ -21,6 +22,12 @@ public class TransferRuleServiceImpl extends ServiceImpl<TransferRuleMapper, Tra
         LocalDate endDate = searchDate.with(TemporalAdjusters.lastDayOfMonth());
 
         return baseMapper.selectPage(request.getPage(), Wrappers.<TransferRule>lambdaQuery()
+                .between(TransferRule::getOverrideDate, startDate, endDate));
+    }
+
+    @Override
+    public List<TransferRule> getListByDate(LocalDate startDate, LocalDate endDate) {
+        return baseMapper.selectList(Wrappers.<TransferRule>lambdaQuery()
                 .between(TransferRule::getOverrideDate, startDate, endDate));
     }
 }

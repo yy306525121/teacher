@@ -154,7 +154,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
                             TimeSlot timeSlot = timeSlotService.getBySortInDay(i);
                             IgnoreItemDto ignoreItem = new IgnoreItemDto();
                             ignoreItem.setDate(currentDate);
-                            ignoreItem.setTimeSlotId(timeSlot.getId());
+                            ignoreItem.setTimeSlot(timeSlot);
                             ignoreItem.setClassInfo(classInfo);
                             ignoreCoursePlanList.add(ignoreItem);
                         }
@@ -196,7 +196,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
             ClassInfo classInfo = classInfoService.getById(coursePlan.getClassInfo().getParentId());
             if (ignoreItemList.stream().anyMatch(item ->
                     item.getDate().equals(date) &&
-                            item.getTimeSlotId().equals(coursePlan.getTimeSlot().getId()) &&
+                            item.getTimeSlot().getId().equals(coursePlan.getTimeSlot().getId()) &&
                             item.getClassInfo().getId().equals(classInfo.getId()))) {
                 continue;
             }
@@ -242,7 +242,7 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
 
         List<CourseFee> courseFeeList = new ArrayList<>();
         for (TimeSlot timeSlot : timeSlotMorning) {
-            List<IgnoreItemDto> matchIgnoreItemList = ignoreItemList.stream().filter(item -> item.getDate().equals(date) && item.getTimeSlotId().equals(timeSlot.getId())).collect(Collectors.toList());
+            List<IgnoreItemDto> matchIgnoreItemList = ignoreItemList.stream().filter(item -> item.getDate().equals(date) && item.getTimeSlot().getId().equals(timeSlot.getId())).collect(Collectors.toList());
             List<ClassInfo> classInfoList = getLevel2ClassIdListNotInIgnore(matchIgnoreItemList);
             if (CollUtil.isEmpty(classInfoList)) {
                 continue;
