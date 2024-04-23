@@ -1,6 +1,7 @@
 package cn.codeyang.course.dto.coursefee;
 
 import cn.codeyang.course.domain.ClassInfo;
+import cn.codeyang.course.domain.TimeSlot;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class IgnoreItemDto implements Serializable {
 
     private LocalDate date;
 
-    private Long timeSlotId;
+    private TimeSlot timeSlot;
 
     private ClassInfo classInfo;
 }
