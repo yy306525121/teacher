@@ -25,4 +25,6 @@ public interface CourseFeeService extends IService<CourseFee> {
     List<CourseFeeDetailRspDto> selectListGroupByDate(Long teacherId, LocalDate start, LocalDate end);
 
     List<CourseFeeExportRspDTO> selectExportList(LocalDate start, LocalDate end);
+
+    void removeByDateBetween(LocalDate start, LocalDate end);
 }

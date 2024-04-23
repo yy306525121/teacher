@@ -5,6 +5,7 @@ import cn.codeyang.common.core.controller.BaseController;
 import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.common.enums.BusinessType;
 import cn.codeyang.course.calculate.CourseFeeCalculateHandleChainService;
+import cn.codeyang.course.domain.CourseFee;
 import cn.codeyang.course.dto.coursefee.*;
 import cn.codeyang.course.service.CourseFeeService;
 import cn.hutool.core.date.LocalDateTimeUtil;
@@ -62,7 +63,9 @@ public class CourseFeeController extends BaseController {
         LocalDate date = request.getDate();
         LocalDate start = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
-        courseFeeCalculateHandleChainService.execute(start, end);
+        courseFeeService.removeByDateBetween(start, end);
+        List<CourseFee> courseFeeList = courseFeeCalculateHandleChainService.execute(start, end);
+        courseFeeService.saveBatch(courseFeeList);
         return success();
     }
 

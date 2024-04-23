@@ -31,23 +31,22 @@ public class TransferRuleCalculate implements CourseFeeCalculate {
 
         List<CourseType> courseTypeList = courseTypeService.list();
 
-        for (CourseFee courseFee : courseFeeList) {
-            TransferRule transferRule = ruleList.stream().filter(rule -> rule.getOverrideDate().equals(courseFee.getDate()) && rule.getOverrideTimeSlotId().equals(courseFee.getTimeSlotId()) && rule.getOverrideFromTeacherId().equals(courseFee.getTeacherId())).findFirst().orElse(null);
-            if (transferRule != null) {
-                courseFee.setTeacherId(transferRule.getOverrideToTeacherId());
-                if (transferRule.getOverrideToSubjectId() != null) {
-                    courseFee.setSubjectId(transferRule.getOverrideToSubjectId());
+        for (TransferRule rule : ruleList) {
+            CourseFee courseFee = courseFeeList.stream().filter(item -> item.getDate().equals(rule.getOverrideDate()) && item.getTimeSlotId().equals(rule.getOverrideTimeSlotId()) && item.getTeacherId().equals(rule.getOverrideFromTeacherId())).findFirst().orElse(null);
+            if (courseFee != null) {
+                courseFee.setTeacherId(rule.getOverrideToTeacherId());
+
+                if (rule.getOverrideToSubjectId() != null) {
+                    courseFee.setSubjectId(rule.getOverrideToSubjectId());
                 }
-                if (transferRule.getOverrideToCourseTypeId() != null) {
-                    CourseType courseType = courseTypeList.stream().filter(item -> item.getId().equals(transferRule.getOverrideToCourseTypeId())).findFirst().orElse(null);
+                if (rule.getOverrideToCourseTypeId() != null) {
+                    CourseType courseType = courseTypeList.stream().filter(item -> item.getId().equals(rule.getOverrideToCourseTypeId())).findFirst().orElse(null);
                     if (courseType != null) {
                         courseFee.setCount(courseType.getPrice());
                     }
                 }
             }
-
         }
-
         return courseFeeList;
     }
 }

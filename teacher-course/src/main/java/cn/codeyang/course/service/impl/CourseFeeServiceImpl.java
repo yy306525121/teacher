@@ -104,6 +104,12 @@ public class CourseFeeServiceImpl extends ServiceImpl<CourseFeeMapper, CourseFee
         return baseMapper.selectExportList(start, end);
     }
 
+    @Override
+    public void removeByDateBetween(LocalDate start, LocalDate end) {
+        baseMapper.delete(Wrappers.<CourseFee>lambdaQuery()
+                .between(CourseFee::getDate, start, end));
+    }
+
 
     /**
      * 根据feeRule组装需要过滤的日期和课程课程节次ID
