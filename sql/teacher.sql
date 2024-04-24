@@ -151,7 +151,8 @@ create table t_transfer_rule
 )
     comment '调课规则表' collate = utf8mb4_unicode_ci;
 
--- auto-generated definition
+
+
 create table t_exam_rule
 (
     id                 bigint auto_increment comment 'ID'
@@ -170,8 +171,7 @@ create table t_exam_rule
     comment '考试时间规则' collate = utf8mb4_unicode_ci;
 
 
--- auto-generated definition
-create table t__rule
+create table t_holiday_rule
 (
     id                 bigint auto_increment comment 'ID'
         primary key,
@@ -188,5 +188,19 @@ create table t__rule
 )
     comment '放假时间规则' collate = utf8mb4_unicode_ci;
 
-
+create table t_fill_rule
+(
+    id                 bigint auto_increment comment 'ID'
+        primary key,
+    date               date                   not null comment '补课日期',
+    source_week        int                    not null comment '补周几的课',
+    start_time_slot_id bigint                 null comment '开始补课节次',
+    end_time_slot_id   bigint                 null comment '结束补课节次',
+    del_flag           tinyint(1)  default 0  null comment '删除标志（0代表存在 1代表删除）',
+    create_by          varchar(64) default '' null comment '创建者',
+    create_time        datetime               null comment '创建时间',
+    update_by          varchar(64) default '' null comment '更新者',
+    update_time        datetime               null comment '更新时间'
+)
+    comment '补课规则表' collate = utf8mb4_unicode_ci;
 
