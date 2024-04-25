@@ -18,4 +18,6 @@ public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
                                                      @Param("date") String date);
 
     List<CoursePlanDto> selectByClassInfoIdOrTeacherId(@Param("classInfoId") Long classInfoId, @Param("teacherId") Long teacherId);
+
+    List<CoursePlanDto> selectListByDateAndWeekAndClassInfoId(@Param("date") LocalDate date, @Param("week") Integer week, @Param("classInfoId") Long classInfoId);
 }

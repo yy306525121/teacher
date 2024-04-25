@@ -23,7 +23,7 @@ import java.util.List;
  * 自习课课时计算
  * @author yangzy
  */
-@Order(3)
+@Order(30)
 @Component
 @RequiredArgsConstructor
 public class StudySelfCourseFeeCalculate implements CourseFeeCalculate {

@@ -49,4 +49,13 @@ public interface CoursePlanService extends IService<CoursePlan> {
      * @return
      */
     List<CoursePlan> selectListByWeekAndCourseType(LocalDate date, int week, Integer type);
+
+    /**
+     * 根据条件查询课程计划
+     * @param date 日期
+     * @param week 星期
+     * @param classInfoId 班级
+     * @return
+     */
+    List<CoursePlanDto> selectListByDateAndWeekAndClassInfoId(LocalDate date, Integer week, Long classInfoId);
 }

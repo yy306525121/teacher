@@ -1,5 +1,6 @@
 package cn.codeyang.course.domain;
 
+import cn.codeyang.common.annotation.Excel;
 import cn.codeyang.common.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -14,6 +15,8 @@ import java.time.LocalDate;
 @TableName("t_fill_rule")
 public class FillRule extends BaseEntity {
     private Long id;
+
+    private String classInfoId;
 
     /**
      * 补课日期

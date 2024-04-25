@@ -4,15 +4,19 @@ import cn.codeyang.common.annotation.Log;
 import cn.codeyang.common.core.controller.BaseController;
 import cn.codeyang.common.core.domain.AjaxResult;
 import cn.codeyang.common.enums.BusinessType;
+import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.FillRule;
 import cn.codeyang.course.domain.TimeSlot;
 import cn.codeyang.course.dto.fillRule.FillRuleAddRequest;
 import cn.codeyang.course.dto.fillRule.FillRuleEditRequest;
 import cn.codeyang.course.dto.fillRule.FillRulePageRequest;
 import cn.codeyang.course.dto.fillRule.FillRulePageRsp;
+import cn.codeyang.course.service.ClassInfoService;
 import cn.codeyang.course.service.FillRuleService;
 import cn.codeyang.course.service.TimeSlotService;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.validation.Valid;
@@ -29,6 +33,7 @@ import java.util.List;
 public class FillRuleController extends BaseController {
     private final FillRuleService fillRuleService;
     private final TimeSlotService timeSlotService;
+    private final ClassInfoService classInfoService;
 
     @PreAuthorize("@ss.hasPermi('course:fillRule:list')")
     @PostMapping("/page")
@@ -38,9 +43,20 @@ public class FillRuleController extends BaseController {
         List<FillRulePageRsp> targetRecords = new ArrayList<>();
 
         List<TimeSlot> timeSlotList = timeSlotService.list();
+        List<ClassInfo> classInfoList = classInfoService.list();
         for (FillRule sourceRecord : sourceRecords) {
             FillRulePageRsp targetRecord = BeanUtil.copyProperties(sourceRecord, FillRulePageRsp.class);
 
+            JSONArray jsonArray = JSONUtil.parseArray(sourceRecord.getClassInfoId());
+            List<ClassInfo> classInfos = new ArrayList<>();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                String classInfoId = jsonArray.getStr(i);
+                ClassInfo classInfo = classInfoList.stream().filter(item -> item.getId().toString().equals(classInfoId)).findFirst().orElse(null);
+                if (classInfo != null) {
+                    classInfos.add(classInfo);
+                }
+            }
+            targetRecord.setClassInfoList(classInfos);
 
             TimeSlot startTimeSlot = timeSlotList.stream().filter(item -> item.getId().equals(sourceRecord.getStartTimeSlotId())).findFirst().orElse(null);
             TimeSlot endTimeSlot = timeSlotList.stream().filter(item -> item.getId().equals(sourceRecord.getEndTimeSlotId())).findFirst().orElse(null);

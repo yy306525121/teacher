@@ -1,5 +1,6 @@
 package cn.codeyang.course.dto.fillRule;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -9,6 +10,8 @@ import java.time.LocalDate;
 @Data
 public class FillRuleAddRequest implements Serializable {
     private static final long serialVersionUID = -8130691764569870442L;
+
+    private String classInfoId;
 
     /**
      * 补课日期

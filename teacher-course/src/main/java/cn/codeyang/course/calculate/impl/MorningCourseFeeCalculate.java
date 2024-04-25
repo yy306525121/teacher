@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * 计算早自习课时
  * @author yangzy
  */
-@Order(1)
+@Order(10)
 @Component
 @RequiredArgsConstructor
 public class MorningCourseFeeCalculate implements CourseFeeCalculate {

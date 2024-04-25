@@ -11,6 +11,8 @@ public class FillRuleEditRequest implements Serializable {
 
     private static final long serialVersionUID = -3310815497219606610L;
 
+    private String classInfoId;
+
     @NotNull(message = "id不能为空")
     private Long id;
 

@@ -23,7 +23,7 @@ import java.util.List;
  * 正常课时计算
  * @author yangzy
  */
-@Order(2)
+@Order(20)
 @Component
 @RequiredArgsConstructor
 public class NormalCourseFeeCalculate implements CourseFeeCalculate {

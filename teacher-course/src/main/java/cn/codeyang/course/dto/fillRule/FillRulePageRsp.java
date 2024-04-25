@@ -1,10 +1,12 @@
 package cn.codeyang.course.dto.fillRule;
 
+import cn.codeyang.course.domain.ClassInfo;
 import cn.codeyang.course.domain.TimeSlot;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class FillRulePageRsp implements Serializable {
@@ -33,4 +35,7 @@ public class FillRulePageRsp implements Serializable {
     private Long endTimeSlotId;
 
     private TimeSlot endTimeSlot;
+
+    private String classInfoId;
+    private List<ClassInfo> classInfoList;
 }

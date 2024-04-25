@@ -6,14 +6,14 @@
     <resultMap id="BaseMapper" type="cn.codeyang.course.dto.courseplan.CoursePlanDto">
         <id property="id" column="course_plan_id"/>
         <result property="dayOfWeek" column="day_of_week"/>
-        <association property="classInfo" javaType="ClassInfo">
+        <association property="classInfo" javaType="cn.codeyang.course.domain.ClassInfo">
             <id property="id" column="class_info_id"/>
             <result property="name" column="class_info_name"/>
             <result property="sort" column="class_info_sort"/>
             <result property="parentId" column="class_info_parent_id"/>
         </association>
 
-        <association property="teacher" javaType="Teacher">
+        <association property="teacher" javaType="cn.codeyang.course.domain.Teacher">
             <id property="id" column="teacher_id"/>
             <result property="name" column="teacher_name"/>
             <result property="status" column="teacher_status"/>
@@ -21,18 +21,18 @@
             <result property="courseSalary" column="teacher_course_salary"/>
         </association>
 
-        <association property="subject" javaType="Subject">
+        <association property="subject" javaType="cn.codeyang.course.domain.Subject">
             <id property="id" column="subject_id"/>
             <result property="name" column="subject_name"/>
             <result property="sort" column="subject_sort"/>
         </association>
 
-        <association property="timeSlot" javaType="TimeSlot">
+        <association property="timeSlot" javaType="cn.codeyang.course.domain.TimeSlot">
             <id property="id" column="time_slot_id"/>
             <result property="sortInDay" column="sort_in_day"/>
         </association>
 
-        <association property="courseType" javaType="CourseType">
+        <association property="courseType" javaType="cn.codeyang.course.domain.CourseType">
             <id property="id" column="course_type_id"/>
             <result property="name" column="course_type_name"/>
             <result property="type" column="course_type_type"/>
@@ -109,6 +109,11 @@
         <if test="classInfoId != null and classInfoId != ''">
             and class_info.id = #{classInfoId}
         </if>
+    </select>
+    <select id="selectListByDateAndWeekAndClassInfoId" resultMap="BaseMapper">
+        <include refid="BaseSql"/>
+        where course_plan.del_flag = 0 and class_info.del_flag = 0 and (teacher.del_flag = 0 or teacher.del_flag is null) and (subject.del_flag = 0 or subject.del_flag is null) and time_slot.del_flag = 0 and course_type.del_flag = 0
+        and course_plan.start &lt;= #{date} and course_plan.end &gt;= #{date} and course_plan.day_of_week = #{week} and course_plan.class_info_id = #{classInfoId}
     </select>
 
 

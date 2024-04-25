@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * 放假规则计算
  */
-@Order(6)
+@Order(60)
 @Component
 @RequiredArgsConstructor
 public class ExamRuleCalculate implements CourseFeeCalculate {

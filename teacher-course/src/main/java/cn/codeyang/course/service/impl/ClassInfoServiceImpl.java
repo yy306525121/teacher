@@ -61,6 +61,12 @@ public class ClassInfoServiceImpl extends ServiceImpl<ClassInfoMapper, ClassInfo
                 .notIn(CollUtil.isNotEmpty(classInfoIdList), ClassInfo::getId, classInfoIdList));
     }
 
+    @Override
+    public List<ClassInfo> listAllLevel2() {
+        return baseMapper.selectList(Wrappers.<ClassInfo>lambdaQuery()
+                .ne(ClassInfo::getParentId, 0));
+    }
+
     private Function<ClassInfo, TreeNode<Long>> getNodeFunction() {
         return classInfo -> {
             TreeNode<Long> node = new TreeNode<>();

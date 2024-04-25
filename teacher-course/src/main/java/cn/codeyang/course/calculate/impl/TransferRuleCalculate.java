@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 调课课时规则
  */
-@Order(7)
+@Order(70)
 @Component
 @RequiredArgsConstructor
 public class TransferRuleCalculate implements CourseFeeCalculate {
