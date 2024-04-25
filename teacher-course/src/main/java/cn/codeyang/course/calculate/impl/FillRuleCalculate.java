@@ -5,6 +5,7 @@ import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.enums.CourseTypeEnum;
 import cn.codeyang.course.service.*;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -52,6 +53,7 @@ public class FillRuleCalculate implements CourseFeeCalculate {
         List<TimeSlot> timeSlotList = timeSlotService.list();
 
         for (FillRule rule : rules) {
+            // 删除原有的补课日的晚自习，
             courseFeeList.addAll(calculateRule(rule, timeSlotList));
         }
 
@@ -77,36 +79,42 @@ public class FillRuleCalculate implements CourseFeeCalculate {
                 List<Long> classTeacherList = classCoursePlanList.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
                 teacherIds.addAll(classTeacherList);
             });
-            courseFeeList.removeIf(item -> !teacherIds.contains(item.getTeacherId()));
+            if (CollUtil.isNotEmpty(courseFeeList)) {
+                courseFeeList.removeIf(item -> !teacherIds.contains(item.getTeacherId()));
+            }
         }
 
         if (rule.getStartTimeSlotId() != null) {
             TimeSlot startTimeSlot = timeSlotService.getById(rule.getStartTimeSlotId());
-            courseFeeList.removeIf(item -> {
-                Long timeSlotId = item.getTimeSlotId();
-                TimeSlot itemTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(timeSlotId)).findFirst().orElse(null);
-                if (itemTimeSlot == null) {
-                    return true;
-                }
-                if (itemTimeSlot.getSortInDay() < startTimeSlot.getSortInDay()) {
-                    return true;
-                }
-                return false;
-            });
+            if (CollUtil.isNotEmpty(courseFeeList)) {
+                courseFeeList.removeIf(item -> {
+                    Long timeSlotId = item.getTimeSlotId();
+                    TimeSlot itemTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(timeSlotId)).findFirst().orElse(null);
+                    if (itemTimeSlot == null) {
+                        return true;
+                    }
+                    if (itemTimeSlot.getSortInDay() < startTimeSlot.getSortInDay()) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
         }
         if (rule.getStartTimeSlotId() != null) {
             TimeSlot endTimeSlot = timeSlotService.getById(rule.getEndTimeSlotId());
-            courseFeeList.removeIf(item -> {
-                Long timeSlotId = item.getTimeSlotId();
-                TimeSlot itemTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(timeSlotId)).findFirst().orElse(null);
-                if (itemTimeSlot == null) {
-                    return true;
-                }
-                if (itemTimeSlot.getSortInDay() > endTimeSlot.getSortInDay()) {
-                    return true;
-                }
-                return false;
-            });
+            if (CollUtil.isNotEmpty(courseFeeList)) {
+                courseFeeList.removeIf(item -> {
+                    Long timeSlotId = item.getTimeSlotId();
+                    TimeSlot itemTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(timeSlotId)).findFirst().orElse(null);
+                    if (itemTimeSlot == null) {
+                        return true;
+                    }
+                    if (itemTimeSlot.getSortInDay() > endTimeSlot.getSortInDay()) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
         }
 
 

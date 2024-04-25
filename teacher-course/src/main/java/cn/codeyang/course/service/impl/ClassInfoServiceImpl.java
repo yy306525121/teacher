@@ -49,6 +49,12 @@ public class ClassInfoServiceImpl extends ServiceImpl<ClassInfoMapper, ClassInfo
     }
 
     @Override
+    public List<ClassInfo> selectListByParentId(Long parentId) {
+        return baseMapper.selectList(Wrappers.<ClassInfo>lambdaQuery()
+                .eq(ClassInfo::getParentId, parentId));
+    }
+
+    @Override
     public ClassInfo getOneByName(String className) {
         return this.baseMapper.selectOne(Wrappers.<ClassInfo>lambdaQuery()
                 .eq(ClassInfo::getName, className));

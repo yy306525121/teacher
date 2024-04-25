@@ -40,6 +40,9 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
         List<IgnoreItemDto> ignoreItemList = getIgnoreItem(startDate, endDate, list);
 
         for (IgnoreItemDto ignoreItem : ignoreItemList) {
+            if (CollUtil.isEmpty(courseFeeList)) {
+                continue;
+            }
             courseFeeList.removeIf(fee ->
                     fee.getDate().equals(ignoreItem.getDate()) &&
                     fee.getClassInfoId().equals(ignoreItem.getClassInfo().getId()) &&

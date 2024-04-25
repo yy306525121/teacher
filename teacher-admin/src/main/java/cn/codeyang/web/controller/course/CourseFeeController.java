@@ -65,7 +65,9 @@ public class CourseFeeController extends BaseController {
         LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
         courseFeeService.removeByDateBetween(start, end);
         List<CourseFee> courseFeeList = courseFeeCalculateHandleChainService.execute(start, end);
+        logger.info("课时计算完成，开始入库...");
         courseFeeService.saveBatch(courseFeeList);
+        logger.info("课时计算完成，入库完成...");
         return success();
     }
 
