@@ -16,6 +16,8 @@ public interface ClassInfoService extends IService<ClassInfo> {
 
     List<ClassInfo> listByParentIdList(List<Long> classInfoIdList);
 
+    List<ClassInfo> selectListByParentId(Long parentId);
+
     ClassInfo getOneByName(String className);
 
     List<ClassInfo> listLevel2ByNotIn(List<Long> classInfoIdList);

@@ -149,5 +149,13 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
         return baseMapper.selectListByDateAndWeekAndClassInfoId(date, week, classInfoId);
     }
 
+    @Override
+    public List<CoursePlan> selectListByClassInfoIdsAndDate(List<Long> classInfoIdList, LocalDate date) {
+        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
+                .le(CoursePlan::getStart, date)
+                .ge(CoursePlan::getEnd, date)
+                .in(CoursePlan::getClassInfoId, classInfoIdList));
+    }
+
 
 }

@@ -58,4 +58,6 @@ public interface CoursePlanService extends IService<CoursePlan> {
      * @return
      */
     List<CoursePlanDto> selectListByDateAndWeekAndClassInfoId(LocalDate date, Integer week, Long classInfoId);
+
+    List<CoursePlan> selectListByClassInfoIdsAndDate(List<Long> classInfoIdList, LocalDate date);
 }

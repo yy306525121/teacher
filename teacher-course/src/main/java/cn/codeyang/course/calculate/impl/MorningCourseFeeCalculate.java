@@ -76,25 +76,7 @@ public class MorningCourseFeeCalculate implements CourseFeeCalculate {
         int week = currentDate.getDayOfWeek().getValue();
         List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(currentDate, week, TYPE);
         if (CollUtil.isNotEmpty(coursePlanList)) {
-            Set<String> unionCoursePlanList = coursePlanList.stream().map(coursePlan -> coursePlan.getSubjectId() + StrUtil.SLASH + coursePlan.getTimeSlotId()).collect(Collectors.toSet());
-            for (String coursePlanStr : unionCoursePlanList) {
-                List<String> coursePlanStrSplit = StrUtil.split(coursePlanStr, StrUtil.SLASH);
-                String subjectId = coursePlanStrSplit.get(0);
-                String timeSlotId = coursePlanStrSplit.get(1);
-                List<Teacher> teacherList = teacherService.getListBySubjectId(subjectId);
-
-                for (Teacher teacher : teacherList) {
-                    CourseFee courseFee = new CourseFee();
-                    courseFee.setCount(price);
-                    courseFee.setTeacherId(teacher.getId());
-                    courseFee.setSubjectId(Long.valueOf(subjectId));
-                    courseFee.setWeek(week);
-                    courseFee.setTimeSlotId(Long.valueOf(timeSlotId));
-                    courseFee.setDate(currentDate);
-                    courseFeeList.add(courseFee);
-                }
-
-            }
+            courseFeeList = calculateMorningFee(teacherService, coursePlanList, price, week, currentDate);
         }
 
         return courseFeeList;
