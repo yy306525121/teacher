@@ -53,4 +53,61 @@ public interface CourseFeeCalculate {
         }
         return courseFeeList;
     }
+
+    default List<CourseFee> calculateNormalFee(CoursePlanService coursePlanService, LocalDate date, Integer week, BigDecimal price) {
+        List<CourseFee> courseFeeList = new ArrayList<>();
+
+        List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(date, week, CourseTypeEnum.NORMAL.getType());
+
+        for (CoursePlan coursePlan : coursePlanList) {
+            CourseFee courseFee = new CourseFee();
+            courseFee.setCount(price);
+            courseFee.setTeacherId(coursePlan.getTeacherId());
+            courseFee.setClassInfoId(coursePlan.getClassInfoId());
+            courseFee.setSubjectId(coursePlan.getSubjectId());
+            courseFee.setWeek(week);
+            courseFee.setTimeSlotId(coursePlan.getTimeSlotId());
+            courseFee.setDate(date);
+            courseFeeList.add(courseFee);
+        }
+
+        return courseFeeList;
+    }
+
+    default List<CourseFee> calculateStudySelf(CoursePlanService coursePlanService, LocalDate date, Integer week, BigDecimal price) {
+        List<CourseFee> courseFeeList = new ArrayList<>();
+
+        List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(date, week, CourseTypeEnum.STUDY_SELF.getType());
+
+        for (CoursePlan coursePlan : coursePlanList) {
+            CourseFee courseFee = new CourseFee();
+            courseFee.setCount(price);
+            courseFee.setTeacherId(coursePlan.getTeacherId());
+            courseFee.setClassInfoId(coursePlan.getClassInfoId());
+            courseFee.setWeek(week);
+            courseFee.setTimeSlotId(coursePlan.getTimeSlotId());
+            courseFee.setDate(date);
+            courseFeeList.add(courseFee);
+        }
+
+        return courseFeeList;
+    }
+
+    default List<CourseFee> calculateEvening(CoursePlanService coursePlanService, LocalDate date, Integer week, BigDecimal price) {
+        List<CourseFee> courseFeeList = new ArrayList<>();
+        List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(date, week, CourseTypeEnum.EVENING.getType());
+
+        for (CoursePlan coursePlan : coursePlanList) {
+            CourseFee courseFee = new CourseFee();
+            courseFee.setCount(price);
+            courseFee.setTeacherId(coursePlan.getTeacherId());
+            courseFee.setClassInfoId(coursePlan.getClassInfoId());
+            courseFee.setWeek(week);
+            courseFee.setTimeSlotId(coursePlan.getTimeSlotId());
+            courseFee.setDate(date);
+            courseFeeList.add(courseFee);
+        }
+
+        return courseFeeList;
+    }
 }

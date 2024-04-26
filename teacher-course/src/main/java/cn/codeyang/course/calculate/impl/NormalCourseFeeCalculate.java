@@ -52,30 +52,11 @@ public class NormalCourseFeeCalculate implements CourseFeeCalculate {
     public List<CourseFee> calculate(LocalDate startDate, LocalDate endDate, List<CourseFee> courseFeeList) {
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
-            courseFeeList.addAll(calculateNormal(currentDate));
+            int week = currentDate.getDayOfWeek().getValue();
+
+            courseFeeList.addAll(calculateNormalFee(coursePlanService, currentDate, week, price));
             currentDate = currentDate.plus(1, ChronoUnit.DAYS);
         }
-        return courseFeeList;
-    }
-
-    private List<CourseFee> calculateNormal(LocalDate currentDate) {
-        List<CourseFee> courseFeeList = new ArrayList<>();
-
-        int week = currentDate.getDayOfWeek().getValue();
-        List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(currentDate, week, TYPE);
-
-        for (CoursePlan coursePlan : coursePlanList) {
-            CourseFee courseFee = new CourseFee();
-            courseFee.setCount(price);
-            courseFee.setTeacherId(coursePlan.getTeacherId());
-            courseFee.setClassInfoId(coursePlan.getClassInfoId());
-            courseFee.setSubjectId(coursePlan.getSubjectId());
-            courseFee.setWeek(week);
-            courseFee.setTimeSlotId(coursePlan.getTimeSlotId());
-            courseFee.setDate(currentDate);
-            courseFeeList.add(courseFee);
-        }
-
         return courseFeeList;
     }
 }

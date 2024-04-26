@@ -13,4 +13,6 @@ public interface TimeSlotService extends IService<TimeSlot> {
     List<TimeSlot> listOrderBySortAsc();
 
     List<TimeSlot> getByType(Integer type);
+
+    List<TimeSlot> selectListByType(Integer type);
 }

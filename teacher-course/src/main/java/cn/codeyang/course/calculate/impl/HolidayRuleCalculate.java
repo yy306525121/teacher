@@ -1,14 +1,11 @@
 package cn.codeyang.course.calculate.impl;
 
 import cn.codeyang.course.calculate.CourseFeeCalculate;
-import cn.codeyang.course.domain.ClassInfo;
-import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.domain.HolidayRule;
-import cn.codeyang.course.domain.TimeSlot;
+import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.coursefee.IgnoreItemDto;
-import cn.codeyang.course.service.ClassInfoService;
-import cn.codeyang.course.service.HolidayRuleService;
-import cn.codeyang.course.service.TimeSlotService;
+import cn.codeyang.course.enums.CourseTypeEnum;
+import cn.codeyang.course.enums.TimeSlotTypeEnum;
+import cn.codeyang.course.service.*;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 放假规则计算
@@ -31,6 +29,8 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
     private final HolidayRuleService holidayRuleService;
     private final ClassInfoService classInfoService;
     private final TimeSlotService timeSlotService;
+    private final TeacherService teacherService;
+    private final CoursePlanService coursePlanService;
     
     @Override
     public List<CourseFee> calculate(LocalDate startDate, LocalDate endDate, List<CourseFee> courseFeeList) {
@@ -43,10 +43,36 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
             if (CollUtil.isEmpty(courseFeeList)) {
                 continue;
             }
-            courseFeeList.removeIf(fee ->
-                    fee.getDate().equals(ignoreItem.getDate()) &&
-                    fee.getClassInfoId().equals(ignoreItem.getClassInfo().getId()) &&
-                    fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
+
+            if (!ignoreItem.getTimeSlot().getType().equals(TimeSlotTypeEnum.MORNING.getType())) {
+                List<ClassInfo> classInfoList = classInfoService.selectListByParentId(ignoreItem.getClassInfo().getId());
+                List<Long> classInfoIdList = classInfoList.stream().map(ClassInfo::getId).toList();
+                // 如果非早自习
+                courseFeeList.removeIf(
+                        fee ->
+                                fee.getDate().equals(ignoreItem.getDate()) &&
+                                fee.getClassInfoId() != null &&
+                                classInfoIdList.contains(fee.getClassInfoId()) &&
+                                fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
+            } else {
+                // 如果是早自习，换一种删除方法， 因为早自习的courseFee的班级ID为空
+                int week = ignoreItem.getDate().getDayOfWeek().getValue();
+                List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(ignoreItem.getDate(), week, CourseTypeEnum.MORNING.getType());
+                List<Long> subjectIdList = coursePlanList.stream().map(CoursePlan::getSubjectId).distinct().toList();
+                List<TimeSlot> timeSlots = timeSlotService.selectListByType(TimeSlotTypeEnum.MORNING.getType());
+                List<Long> morningTimeSlotIdList = timeSlots.stream().map(TimeSlot::getId).toList();
+                for (Long subjectId : subjectIdList) {
+                    // 查询只任课某阶段的早自习科目的老师， 然后删除该老师的早自习课时
+                    List<Teacher> teacherList = teacherService.getListByTopClassInfoIdAndSubjectIdOnly(ignoreItem.getClassInfo().getId(), subjectId);
+                    List<Long> teacherIdList = teacherList.stream().map(Teacher::getId).toList();
+                    courseFeeList.removeIf(
+                            fee ->
+                                    fee.getDate().equals(ignoreItem.getDate()) &&
+                                            morningTimeSlotIdList.contains(fee.getTimeSlotId()) &&
+                                    teacherIdList.contains(fee.getTeacherId())
+                    );
+                }
+            }
         }
 
         return courseFeeList;
@@ -56,7 +82,7 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
     private List<IgnoreItemDto> getIgnoreItem(LocalDate startDate, LocalDate endDate, List<HolidayRule> ruleList) {
         List<IgnoreItemDto> ignoreCoursePlanList = new ArrayList<>();
 
-        List<ClassInfo> classInfoLevel2List = classInfoService.listByParentIdList(List.of(0L));
+        List<ClassInfo> classInfoLevel1List = classInfoService.listByParentIdList(List.of(0L));
         TimeSlot firstTimeSlot = timeSlotService.getFirst();
         TimeSlot lastTimeSlot = timeSlotService.getLast();
 
@@ -66,7 +92,7 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
             }
 
             // 1. 规则适用班级
-            List<ClassInfo> ruleClassInfoList = classInfoLevel2List;
+            List<ClassInfo> ruleClassInfoList = classInfoLevel1List;
             if (StrUtil.isNotEmpty(rule.getClassInfoId())) {
                 List<Long> ruleClassInfoIdList = JSONUtil.toList(rule.getClassInfoId(), Long.class);
                 if (CollUtil.isNotEmpty(ruleClassInfoIdList)) {
@@ -104,13 +130,18 @@ public class HolidayRuleCalculate implements CourseFeeCalculate {
                         continue;
                     }
 
-                    for (ClassInfo classInfo : ruleClassInfoList) {
+                    for (ClassInfo topClassInfo : ruleClassInfoList) {
+                        LocalDate finalTmpDate = tmpDate;
                         TimeSlot timeSlot = timeSlotService.getBySortInDay(i);
-                        IgnoreItemDto ignoreItem = new IgnoreItemDto();
-                        ignoreItem.setDate(tmpDate);
-                        ignoreItem.setTimeSlot(timeSlot);
-                        ignoreItem.setClassInfo(classInfo);
-                        ignoreCoursePlanList.add(ignoreItem);
+
+                        Optional<IgnoreItemDto> first = ignoreCoursePlanList.stream().filter(item -> item.getDate().equals(finalTmpDate) && item.getTimeSlot().getId().equals(timeSlot.getId()) && item.getClassInfo().getId().equals(topClassInfo.getId())).findFirst();
+                        if (!first.isPresent()) {
+                            IgnoreItemDto ignoreItem = new IgnoreItemDto();
+                            ignoreItem.setDate(tmpDate);
+                            ignoreItem.setTimeSlot(timeSlot);
+                            ignoreItem.setClassInfo(topClassInfo);
+                            ignoreCoursePlanList.add(ignoreItem);
+                        }
                     }
                 }
                 tmpDate = tmpDate.plusDays(1);

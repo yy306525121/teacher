@@ -36,4 +36,13 @@ public interface TeacherService extends IService<Teacher> {
     Teacher getByNameAndCreate(String teacherName);
 
     List<Teacher> getListBySubjectId(String subjectId);
+
+    /**
+     * 查询只教某一阶段的某个科目的老师
+     * 比如：A老师只教高一的英语（返回）
+     *      B老师同时教高一和高二的英语（不返回）
+     * @param topClassInfoId
+     * @return
+     */
+    List<Teacher> getListByTopClassInfoIdAndSubjectIdOnly(Long topClassInfoId, Long subjectId);
 }

@@ -1,14 +1,11 @@
 package cn.codeyang.course.calculate.impl;
 
 import cn.codeyang.course.calculate.CourseFeeCalculate;
-import cn.codeyang.course.domain.ClassInfo;
-import cn.codeyang.course.domain.CourseFee;
-import cn.codeyang.course.domain.ExamRule;
-import cn.codeyang.course.domain.TimeSlot;
+import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.coursefee.IgnoreItemDto;
-import cn.codeyang.course.service.ClassInfoService;
-import cn.codeyang.course.service.ExamRuleService;
-import cn.codeyang.course.service.TimeSlotService;
+import cn.codeyang.course.enums.CourseTypeEnum;
+import cn.codeyang.course.enums.TimeSlotTypeEnum;
+import cn.codeyang.course.service.*;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -31,6 +28,8 @@ public class ExamRuleCalculate implements CourseFeeCalculate {
     private final ExamRuleService examRuleService;
     private final ClassInfoService classInfoService;
     private final TimeSlotService timeSlotService;
+    private final TeacherService teacherService;
+    private final CoursePlanService coursePlanService;
 
     @Override
     public List<CourseFee> calculate(LocalDate startDate, LocalDate endDate, List<CourseFee> courseFeeList) {
@@ -43,7 +42,36 @@ public class ExamRuleCalculate implements CourseFeeCalculate {
             if (CollUtil.isEmpty(courseFeeList)) {
                 continue;
             }
-            courseFeeList.removeIf(fee -> fee.getDate().equals(ignoreItem.getDate()) && fee.getClassInfoId().equals(ignoreItem.getClassInfo().getId()) && fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
+            if (!ignoreItem.getTimeSlot().getType().equals(TimeSlotTypeEnum.MORNING.getType())) {
+                // 如果不是早自习,直接删除
+                List<ClassInfo> classInfoList = classInfoService.selectListByParentId(ignoreItem.getClassInfo().getId());
+                List<Long> classInfoIdList = classInfoList.stream().map(ClassInfo::getId).toList();
+                courseFeeList.removeIf(
+                        fee ->
+                                fee.getDate().equals(ignoreItem.getDate()) &&
+                                        fee.getClassInfoId() != null &&
+                                        classInfoIdList.contains(fee.getClassInfoId()) &&
+                                        fee.getTimeSlotId().equals(ignoreItem.getTimeSlot().getId()));
+            } else {
+                // 如果是早自习，换一种删除方法， 因为早自习的courseFee的班级ID为空
+                int week = ignoreItem.getDate().getDayOfWeek().getValue();
+                List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(ignoreItem.getDate(), week, CourseTypeEnum.MORNING.getType());
+                List<Long> subjectIdList = coursePlanList.stream().map(CoursePlan::getSubjectId).distinct().toList();
+                List<TimeSlot> timeSlots = timeSlotService.selectListByType(TimeSlotTypeEnum.MORNING.getType());
+                List<Long> morningTimeSlotIdList = timeSlots.stream().map(TimeSlot::getId).toList();
+                for (Long subjectId : subjectIdList) {
+                    // 查询只任课某阶段的早自习科目的老师， 然后删除该老师的早自习课时
+                    List<Teacher> teacherList = teacherService.getListByTopClassInfoIdAndSubjectIdOnly(ignoreItem.getClassInfo().getId(), subjectId);
+                    List<Long> teacherIdList = teacherList.stream().map(Teacher::getId).toList();
+                    courseFeeList.removeIf(
+                            fee ->
+                                    fee.getDate().equals(ignoreItem.getDate()) &&
+                                            morningTimeSlotIdList.contains(fee.getTimeSlotId()) &&
+                                            teacherIdList.contains(fee.getTeacherId())
+                    );
+                }
+            }
+
         }
 
         return courseFeeList;

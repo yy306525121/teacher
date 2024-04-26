@@ -35,4 +35,9 @@ public class TimeSlotServiceImpl extends ServiceImpl<TimeSlotMapper, TimeSlot> i
     public List<TimeSlot> getByType(Integer type) {
         return baseMapper.selectList(Wrappers.<TimeSlot>lambdaQuery().eq(TimeSlot::getType, type));
     }
+
+    @Override
+    public List<TimeSlot> selectListByType(Integer type) {
+        return baseMapper.selectList(Wrappers.<TimeSlot>lambdaQuery().eq(TimeSlot::getType, type));
+    }
 }

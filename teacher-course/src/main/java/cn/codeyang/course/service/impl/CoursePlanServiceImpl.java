@@ -1,14 +1,18 @@
 package cn.codeyang.course.service.impl;
 
 import cn.codeyang.course.domain.CoursePlan;
+import cn.codeyang.course.domain.CourseType;
 import cn.codeyang.course.dto.courseplan.CoursePlanChangeRequest;
 import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.dto.courseplan.CoursePlanFilterDto;
+import cn.codeyang.course.enums.CourseTypeEnum;
 import cn.codeyang.course.mapper.CoursePlanMapper;
+import cn.codeyang.course.mapper.CourseTypeMapper;
 import cn.codeyang.course.opta.domain.CoursePlanOpta;
 import cn.codeyang.course.opta.domain.CoursePlanSolution;
 import cn.codeyang.course.opta.domain.CoursePlanWeek;
 import cn.codeyang.course.service.CoursePlanService;
+import cn.codeyang.course.service.CourseTypeService;
 import cn.codeyang.course.service.TimeSlotService;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DatePattern;
@@ -22,11 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CoursePlan> implements CoursePlanService {
     private final TimeSlotService timeSlotService;
+    private final CourseTypeMapper courseTypeMapper;
 
     @Override
     public List<CoursePlanDto> selectListByClassInfoId(Long classInfoId) {
@@ -155,6 +161,21 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
                 .le(CoursePlan::getStart, date)
                 .ge(CoursePlan::getEnd, date)
                 .in(CoursePlan::getClassInfoId, classInfoIdList));
+    }
+
+    @Override
+    public List<CoursePlan> selectListByClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId) {
+        // 1 查询该课程不再这些班级的所有老师
+        List<CoursePlan> coursePlans = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().notIn(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId));
+        List<Long> teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
+
+        // 排除早自习， 因为早自习课程计划教师id为空
+        CourseType courseType = courseTypeMapper.selectOne(Wrappers.<CourseType>lambdaQuery().eq(CourseType::getType, CourseTypeEnum.MORNING.getType()));
+        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
+                .ne(CoursePlan::getCourseTypeId, courseType.getId())
+                .eq(CoursePlan::getSubjectId, subjectId)
+                .in(CoursePlan::getClassInfoId, classInfoIdList)
+                .notIn(CoursePlan::getTeacherId, teacherIds));
     }
 
 

@@ -34,15 +34,24 @@ public class FillRuleCalculate implements CourseFeeCalculate {
      * 早自习课时费
      */
     private BigDecimal morningPrice;
+    private BigDecimal normalPrice;
+    private BigDecimal studySelfPrice;
+    private BigDecimal eveningPrice;
 
     @SneakyThrows
     @PostConstruct
     public void init() {
         CourseType morningCourseType = courseTypeService.selectByType(CourseTypeEnum.MORNING.getType());
-        if (morningCourseType == null) {
-            throw new Exception("请检查t_course_type表中是否存在早自习课程类型");
+        CourseType normalCourseType = courseTypeService.selectByType(CourseTypeEnum.NORMAL.getType());
+        CourseType studySelfCourseType = courseTypeService.selectByType(CourseTypeEnum.STUDY_SELF.getType());
+        CourseType eveningCourseType = courseTypeService.selectByType(CourseTypeEnum.EVENING.getType());
+        if (morningCourseType == null || normalCourseType == null || studySelfCourseType == null || eveningCourseType == null) {
+            throw new Exception("请检查t_course_type表中课程类型是否完整");
         }
         morningPrice = morningCourseType.getPrice();
+        normalPrice = normalCourseType.getPrice();
+        studySelfPrice = studySelfCourseType.getPrice();
+        eveningPrice = eveningCourseType.getPrice();
     }
 
     @Override
@@ -102,7 +111,7 @@ public class FillRuleCalculate implements CourseFeeCalculate {
             courseFeeList.addAll(calculateRule(rule, timeSlotList));
         }
 
-        return List.of();
+        return courseFeeList;
     }
 
     private List<CourseFee> calculateRule(FillRule rule, List<TimeSlot> timeSlotList) {
@@ -110,8 +119,14 @@ public class FillRuleCalculate implements CourseFeeCalculate {
         Integer week = rule.getWeek();
         LocalDate date = rule.getDate();
         List<CoursePlan> coursePlanList = coursePlanService.selectListByWeekAndCourseType(date, week, CourseTypeEnum.MORNING.getType());
+        // 计算早自习课时
         List<CourseFee> courseFeeList = calculateMorningFee(teacherService, coursePlanList, morningPrice, week, date);
-
+        // 计算正常课时
+        courseFeeList.addAll(calculateNormalFee(coursePlanService, date, week, normalPrice));
+        // 计算自习课时
+        courseFeeList.addAll(calculateStudySelf(coursePlanService, date, week, studySelfPrice));
+        // 计算晚自习课时
+        courseFeeList.addAll(calculateEvening(coursePlanService, date, week, eveningPrice));
 
         if (StrUtil.isNotEmpty(rule.getClassInfoId())) {
             // 获取需要保留下来的教师的courseFee
