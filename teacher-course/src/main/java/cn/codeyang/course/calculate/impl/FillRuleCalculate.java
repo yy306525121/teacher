@@ -2,11 +2,9 @@ package cn.codeyang.course.calculate.impl;
 
 import cn.codeyang.course.calculate.CourseFeeCalculate;
 import cn.codeyang.course.domain.*;
-import cn.codeyang.course.dto.courseplan.CoursePlanDto;
 import cn.codeyang.course.enums.CourseTypeEnum;
 import cn.codeyang.course.service.*;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.PostConstruct;
@@ -39,7 +37,7 @@ public class FillRuleCalculate implements CourseFeeCalculate {
 
     @SneakyThrows
     @PostConstruct
-    public void init(){
+    public void init() {
         CourseType morningCourseType = courseTypeService.selectByType(CourseTypeEnum.MORNING.getType());
         if (morningCourseType == null) {
             throw new Exception("请检查t_course_type表中是否存在早自习课程类型");
@@ -52,8 +50,55 @@ public class FillRuleCalculate implements CourseFeeCalculate {
         List<FillRule> rules = fillRuleService.getListByDate(startDate, endDate);
         List<TimeSlot> timeSlotList = timeSlotService.list();
 
+        TimeSlot firstTimeSlot = timeSlotService.getFirst();
+        TimeSlot lastTimeSlot = timeSlotService.getLast();
+
         for (FillRule rule : rules) {
+            int deleteFrom = firstTimeSlot.getSortInDay();
+            int deleteTo = lastTimeSlot.getSortInDay();
+
             // 删除原有的补课日的晚自习，
+            Long startTimeSlotId = rule.getStartTimeSlotId();
+            if (startTimeSlotId != null) {
+                TimeSlot startTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(startTimeSlotId)).findFirst().orElseThrow();
+                deleteFrom = startTimeSlot.getSortInDay();
+            }
+            Long endTimeSlotId = rule.getEndTimeSlotId();
+            if (endTimeSlotId != null) {
+                TimeSlot endTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(endTimeSlotId)).findFirst().orElseThrow();
+                deleteTo = endTimeSlot.getSortInDay();
+            }
+
+            if (CollUtil.isNotEmpty(courseFeeList)) {
+                int finalDeleteFrom = deleteFrom;
+                int finalDeleteTo = deleteTo;
+
+                List<Long> deleteClassIdList = new ArrayList<>();
+                if (StrUtil.isNotEmpty(rule.getClassInfoId())) {
+                    List<Long> classInfoIdList = JSONUtil.toList(rule.getClassInfoId(), Long.class);
+                    if (CollUtil.isNotEmpty(classInfoIdList)) {
+                        List<ClassInfo> classInfos = classInfoService.listByParentIdList(classInfoIdList);
+                        deleteClassIdList = classInfos.stream().map(ClassInfo::getId).toList();
+                    }
+
+                }
+                List<Long> finalDeleteClassIdList = deleteClassIdList;
+                courseFeeList.removeIf(courseFee -> {
+                    TimeSlot courseFeeTimeSlot = timeSlotList.stream().filter(timeSlot -> timeSlot.getId().equals(courseFee.getTimeSlotId())).findFirst().orElseThrow();
+                    if (CollUtil.isNotEmpty(finalDeleteClassIdList)) {
+                        return courseFee.getDate().equals(rule.getDate()) &&
+                                courseFeeTimeSlot.getSortInDay() >= finalDeleteFrom &&
+                                courseFeeTimeSlot.getSortInDay() <= finalDeleteTo &&
+                                finalDeleteClassIdList.contains(courseFee.getClassInfoId());
+                    } else {
+                        return courseFee.getDate().equals(rule.getDate()) &&
+                                courseFeeTimeSlot.getSortInDay() >= finalDeleteFrom &&
+                                courseFeeTimeSlot.getSortInDay() <= finalDeleteTo;
+                    }
+                });
+            }
+
+
             courseFeeList.addAll(calculateRule(rule, timeSlotList));
         }
 
