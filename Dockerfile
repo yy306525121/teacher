@@ -10,4 +10,3 @@ EXPOSE 8888
 
 ENTRYPOINT ["java", "-jar"]
 CMD ["app.jar"]
-
