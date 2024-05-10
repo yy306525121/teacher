@@ -161,7 +161,7 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
     @Override
     public List<CoursePlan> selectListByOnlyClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId) {
         // 1 查询该课程不再这些班级的所有老师
-        List<CoursePlan> coursePlans = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().notIn(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId));
+        List<CoursePlan> coursePlans = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().in(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId));
         List<Long> teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
 
         // 排除早自习， 因为早自习课程计划教师id为空
@@ -170,7 +170,7 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
                 .ne(CoursePlan::getCourseTypeId, courseType.getId())
                 .eq(CoursePlan::getSubjectId, subjectId)
                 .in(CoursePlan::getClassInfoId, classInfoIdList)
-                .notIn(CoursePlan::getTeacherId, teacherIds));
+                .in(CoursePlan::getTeacherId, teacherIds));
     }
 
     @Override

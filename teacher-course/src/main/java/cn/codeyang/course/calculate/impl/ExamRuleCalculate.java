@@ -3,6 +3,7 @@ package cn.codeyang.course.calculate.impl;
 import cn.codeyang.course.calculate.CourseFeeCalculate;
 import cn.codeyang.course.domain.*;
 import cn.codeyang.course.dto.coursefee.IgnoreItemDto;
+import cn.codeyang.course.dto.coursefee.PreDeleteItemDto;
 import cn.codeyang.course.enums.CourseTypeEnum;
 import cn.codeyang.course.enums.TimeSlotTypeEnum;
 import cn.codeyang.course.service.*;
@@ -38,6 +39,9 @@ public class ExamRuleCalculate implements CourseFeeCalculate {
         // 获取放假的日期和节次
         List<IgnoreItemDto> ignoreItemList = getIgnoreItem(startDate, endDate, list);
 
+        // 因为跨阶段无法立即删除课时的教师，先存入这里，后续处理
+        List<PreDeleteItemDto> preMorningDeleteItemList = new ArrayList<>();
+
         for (IgnoreItemDto ignoreItem : ignoreItemList) {
             if (CollUtil.isEmpty(courseFeeList)) {
                 continue;
@@ -60,7 +64,7 @@ public class ExamRuleCalculate implements CourseFeeCalculate {
                 List<TimeSlot> timeSlots = timeSlotService.selectListByType(TimeSlotTypeEnum.MORNING.getType());
                 List<Long> morningTimeSlotIdList = timeSlots.stream().map(TimeSlot::getId).toList();
                 for (Long subjectId : subjectIdList) {
-                    // 查询只任课某阶段的早自习科目的老师， 然后删除该老师的早自习课时
+                    // 1.查询只任课某阶段的早自习科目的老师， 然后删除该老师的早自习课时
                     List<Teacher> teacherList = teacherService.getListByTopClassInfoIdAndSubjectIdOnly(ignoreItem.getClassInfo().getId(), subjectId);
                     List<Long> teacherIdList = teacherList.stream().map(Teacher::getId).toList();
                     courseFeeList.removeIf(
@@ -69,9 +73,51 @@ public class ExamRuleCalculate implements CourseFeeCalculate {
                                             morningTimeSlotIdList.contains(fee.getTimeSlotId()) &&
                                             teacherIdList.contains(fee.getTeacherId())
                     );
+
+                    // 2. 查询跨阶段教师的早自习科目老师，留待后续判断是否需要删除
+                    List<Teacher> manyClassTeacherList = teacherService.getGt1ClassListByTopClassAndSubjectId(ignoreItem.getClassInfo().getId(), subjectId);
+                    if (!manyClassTeacherList.isEmpty()) {
+                        PreDeleteItemDto preDeleteItemDto = new PreDeleteItemDto();
+                        preDeleteItemDto.setDate(ignoreItem.getDate());
+                        preDeleteItemDto.setWeek(week);
+                        preDeleteItemDto.setTimeSlotIdList(morningTimeSlotIdList);
+                        preDeleteItemDto.setSubjectId(subjectId);
+                        preDeleteItemDto.setTeacherList(manyClassTeacherList);
+                        preMorningDeleteItemList.add(preDeleteItemDto);
+                    }
                 }
             }
+        }
 
+        if (!preMorningDeleteItemList.isEmpty()) {
+            // 处理因为跨阶段而无法删除课时的老师的课时费
+            preMorningDeleteItemList.forEach( preDeleteItem -> {
+                for (Teacher teacher : preDeleteItem.getTeacherList()) {
+                    // 查询该教师任课哪些年级
+                    List<ClassInfo> classInfoList = classInfoService.selectTopListBySubjectIdAndTeacherId(preDeleteItem.getSubjectId(), teacher.getId());
+                    boolean flag = true;
+                    for (ClassInfo classInfo : classInfoList) {
+                        long count = ignoreItemList.stream().filter(item ->
+                                        item.getClassInfo().getId().equals(classInfo.getId()) &&
+                                                item.getDate().equals(preDeleteItem.getDate()) &&
+                                                preDeleteItem.getTimeSlotIdList().contains(item.getTimeSlot().getId()))
+                                .count();
+                        if (count == 0) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        courseFeeList.removeIf(
+                                fee ->
+                                        fee.getDate().equals(preDeleteItem.getDate()) &&
+                                                preDeleteItem.getTimeSlotIdList().contains(fee.getTimeSlotId()) &&
+                                                teacher.getId().equals(fee.getTeacherId())
+                        );
+                    }
+
+                }
+            });
         }
 
         return courseFeeList;

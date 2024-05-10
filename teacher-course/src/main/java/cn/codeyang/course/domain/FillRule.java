@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * 补课
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_fill_rule")
