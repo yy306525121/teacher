@@ -61,5 +61,23 @@ public interface CoursePlanService extends IService<CoursePlan> {
 
     List<CoursePlan> selectListByClassInfoIdsAndDate(List<Long> classInfoIdList, LocalDate date);
 
-    List<CoursePlan> selectListByClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId);
+    /**
+     * 查询只任课某些班级的某科目的教师，如果任课其他班级的教师不返回
+     * @param classInfoIdList
+     * @param subjectId
+     * @return
+     */
+    List<CoursePlan> selectListByOnlyClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId);
+
+    List<CoursePlan> selectListByClassInfoIdsAndSubjectId(List<Long> classInfoIdList, Long subjectId);
+
+    /**
+     * 查询不任课指定班级的某科目教师，同时该教师是teacherIds的一部分
+     * @param classInfoIdList
+     * @param subjectId
+     * @param teacherIds
+     * @return
+     */
+    List<CoursePlan> selectListByClassInfoIdsNotInAndSubjectIdAndTeacherIds(List<Long> classInfoIdList, Long subjectId, List<Long> teacherIds);
+
 }

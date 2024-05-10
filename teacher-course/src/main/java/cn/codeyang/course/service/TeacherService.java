@@ -45,4 +45,14 @@ public interface TeacherService extends IService<Teacher> {
      * @return
      */
     List<Teacher> getListByTopClassInfoIdAndSubjectIdOnly(Long topClassInfoId, Long subjectId);
+
+    /**
+     * 查询任课某个阶段的老师， 同时也任课其他阶段该科目的老师列表
+     * 比如：A老师只教高一的英语（不返回）
+     *      B老师同时教高一和高二的英语（返回）
+     * @param topClassInfoId
+     * @param subjectId
+     * @return
+     */
+    List<Teacher> getGt1ClassListByTopClassAndSubjectId(Long topClassInfoId, Long subjectId);
 }

@@ -13,12 +13,14 @@ import java.util.List;
  * @author yangzy
  */
 @Data
-public class IgnoreItemDto implements Serializable {
-    private static final long serialVersionUID = 5329699105864030358L;
+public class PreDeleteItemDto implements Serializable {
+
+    private static final long serialVersionUID = 6981759083480131227L;
 
     private LocalDate date;
-
-    private TimeSlot timeSlot;
-
+    private Integer week;
+    private Long subjectId;
+    private List<Long> timeSlotIdList;
     private ClassInfo classInfo;
+    List<Teacher> teacherList;
 }

@@ -131,8 +131,29 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
     public List<Teacher> getListByTopClassInfoIdAndSubjectIdOnly(Long topClassInfoId, Long subjectId) {
         List<ClassInfo> classInfoList = classInfoService.selectListByParentId(topClassInfoId);
         List<Long> classInfoIdList = classInfoList.stream().map(ClassInfo::getId).toList();
-        List<CoursePlan> coursePlans = coursePlanService.selectListByClassInfoIdsAndSubject(classInfoIdList, subjectId);
+        List<CoursePlan> coursePlans = coursePlanService.selectListByOnlyClassInfoIdsAndSubject(classInfoIdList, subjectId);
         List<Long> teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
+        return baseMapper.selectList(Wrappers.<Teacher>lambdaQuery()
+                .in(Teacher::getId, teacherIds));
+    }
+
+    @Override
+    public List<Teacher> getGt1ClassListByTopClassAndSubjectId(Long topClassInfoId, Long subjectId) {
+        List<ClassInfo> classInfoList = classInfoService.selectListByParentId(topClassInfoId);
+        List<Long> classInfoIdList = classInfoList.stream().map(ClassInfo::getId).toList();
+        // 查询这些班级的该课程的所有课程计划
+        List<CoursePlan> coursePlans = coursePlanService.selectListByClassInfoIdsAndSubjectId(classInfoIdList, subjectId);
+
+        List<Long> teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
+        if (teacherIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        coursePlans = coursePlanService.selectListByClassInfoIdsNotInAndSubjectIdAndTeacherIds(classInfoIdList, subjectId, teacherIds);
+        teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
+
+        if (teacherIds.isEmpty()) {
+            return new ArrayList<>();
+        }
         return baseMapper.selectList(Wrappers.<Teacher>lambdaQuery()
                 .in(Teacher::getId, teacherIds));
     }

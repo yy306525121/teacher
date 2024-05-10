@@ -23,4 +23,8 @@ public interface ClassInfoService extends IService<ClassInfo> {
     List<ClassInfo> listLevel2ByNotIn(List<Long> classInfoIdList);
 
     List<ClassInfo> listAllLevel2();
+
+    List<ClassInfo> selectTopListBySubjectIdAndTeacherId(Long subjectId, Long teacherId);
+
+    List<ClassInfo> selectListByIds(List<Long> ids);
 }

@@ -147,11 +147,6 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
 
     @Override
     public List<CoursePlanDto> selectListByDateAndWeekAndClassInfoId(LocalDate date, Integer week, Long classInfoId) {
-//        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
-//                .le(CoursePlan::getStart, date)
-//                .ge(CoursePlan::getEnd, date)
-//                .eq(CoursePlan::getDayOfWeek, week)
-//                .eq(CoursePlan::getClassInfoId, classInfoId));
         return baseMapper.selectListByDateAndWeekAndClassInfoId(date, week, classInfoId);
     }
 
@@ -164,7 +159,7 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
     }
 
     @Override
-    public List<CoursePlan> selectListByClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId) {
+    public List<CoursePlan> selectListByOnlyClassInfoIdsAndSubject(List<Long> classInfoIdList, Long subjectId) {
         // 1 查询该课程不再这些班级的所有老师
         List<CoursePlan> coursePlans = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().notIn(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId));
         List<Long> teacherIds = coursePlans.stream().map(CoursePlan::getTeacherId).filter(Objects::nonNull).toList();
@@ -176,6 +171,17 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
                 .eq(CoursePlan::getSubjectId, subjectId)
                 .in(CoursePlan::getClassInfoId, classInfoIdList)
                 .notIn(CoursePlan::getTeacherId, teacherIds));
+    }
+
+    @Override
+    public List<CoursePlan> selectListByClassInfoIdsAndSubjectId(List<Long> classInfoIdList, Long subjectId) {
+        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().in(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId));
+
+    }
+
+    @Override
+    public List<CoursePlan> selectListByClassInfoIdsNotInAndSubjectIdAndTeacherIds(List<Long> classInfoIdList, Long subjectId, List<Long> teacherIds) {
+        return baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery().notIn(CoursePlan::getClassInfoId, classInfoIdList).eq(CoursePlan::getSubjectId, subjectId).in(CoursePlan::getTeacherId, teacherIds));
     }
 
 
