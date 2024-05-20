@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,16 +107,23 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
     public void change(CoursePlanChangeRequest request) {
         // 日期
         LocalDate date = request.getDate();
+        Integer week = request.getWeek();
+        Long timeSlotId = request.getTimeSlotId();
         // 班级
         Long classInfoId = request.getClassInfoId();
         // 原有教师
         Long fromTeacherId = request.getFromTeacherId();
+        Long toTeacherId = request.getToTeacherId();
         // 原有课程
         Long fromSubjectId = request.getFromSubjectId();
+        Long toSubjectId = request.getToSubjectId();
 
         List<CoursePlan> originCoursePlanList = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
                 .eq(CoursePlan::getClassInfoId, classInfoId)
-                .eq(CoursePlan::getTeacherId, fromTeacherId)
+                .eq(fromTeacherId != null, CoursePlan::getTeacherId, fromTeacherId)
+                .eq(fromSubjectId != null, CoursePlan::getSubjectId, fromSubjectId)
+                .eq(week != null, CoursePlan::getDayOfWeek, week)
+                .eq(timeSlotId != null, CoursePlan::getTimeSlotId, timeSlotId)
         );
 
         List<CoursePlan> newCoursePlanList = new ArrayList<>(originCoursePlanList.size());
@@ -126,6 +134,7 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
             newCoursePlan.setStart(date);
             newCoursePlan.setEnd(LocalDate.of(2999, 1, 1));
             newCoursePlan.setTeacherId(request.getToTeacherId());
+            newCoursePlan.setSubjectId(toSubjectId);
 
             coursePlan.setEnd(date.plusDays(-1));
 

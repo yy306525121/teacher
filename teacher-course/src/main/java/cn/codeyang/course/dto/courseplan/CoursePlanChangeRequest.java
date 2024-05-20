@@ -21,6 +21,16 @@ public class CoursePlanChangeRequest implements Serializable {
     private LocalDate date;
 
     /**
+     * 固定周
+     */
+    private Integer week;
+
+    /**
+     * 固定节次
+     */
+    private Long timeSlotId;
+
+    /**
      * 原有老师
      */
     private Long fromTeacherId;
