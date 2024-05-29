@@ -85,7 +85,7 @@ public class CoursePlanExcelUtil {
                         Subject subject = subjectService.getByNameAndCreate(subjectName);
                         Teacher teacher = teacherService.getByNameAndCreate(teacherName);
 
-                        coursePlan.setCourseTypeId(1);
+                        coursePlan.setCourseTypeId(1L);
                         coursePlan.setTeacherId(teacher.getId());
                         coursePlan.setSubjectId(subject.getId());
                     } else if (courseStrSplitList.size() == 1) {
@@ -93,13 +93,13 @@ public class CoursePlanExcelUtil {
                             // 晚自习， 课程表中只有教师姓名
                             String teacherName = courseStrSplitList.get(0);
                             Teacher teacher = teacherService.getByNameAndCreate(teacherName);
-                            coursePlan.setCourseTypeId(4);
+                            coursePlan.setCourseTypeId(4L);
                             coursePlan.setTeacherId(teacher.getId());
                         } else if (timeSlot.getType() == 3) {
                             // 白天自习课
                             String teacherName = courseStrSplitList.get(0);
                             Teacher teacher = teacherService.getByNameAndCreate(teacherName);
-                            coursePlan.setCourseTypeId(2);
+                            coursePlan.setCourseTypeId(2L);
                             coursePlan.setTeacherId(teacher.getId());
                         }
                     }

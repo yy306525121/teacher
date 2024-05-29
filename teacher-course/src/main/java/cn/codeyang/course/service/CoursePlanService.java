@@ -34,7 +34,7 @@ public interface CoursePlanService extends IService<CoursePlan> {
      * @param teacherId
      * @return
      */
-    List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId);
+    List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId, LocalDate localDate);
 
     /**
      * 替换课程

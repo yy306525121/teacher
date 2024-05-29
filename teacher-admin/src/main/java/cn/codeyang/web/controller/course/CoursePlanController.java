@@ -78,13 +78,13 @@ public class CoursePlanController {
             if (request.getClassInfoId() == null) {
                 return AjaxResult.error("请选择班级");
             }
-            return success(coursePlanService.selectByClassInfoIdOrTeacherId(request.getClassInfoId(), null));
+            return success(coursePlanService.selectByClassInfoIdOrTeacherId(request.getClassInfoId(), null, request.getDate()));
         } else if (queryType == 2) {
             // 按老师查询
             if (request.getTeacherId() == null) {
                 return AjaxResult.error("请选择老师");
             }
-            return success(coursePlanService.selectByClassInfoIdOrTeacherId(null, request.getTeacherId()));
+            return success(coursePlanService.selectByClassInfoIdOrTeacherId(null, request.getTeacherId(), request.getDate()));
         } else {
             return AjaxResult.error("查询类型错误");
         }
@@ -144,7 +144,7 @@ public class CoursePlanController {
                     coursePlan.setSubjectId(subjectEnglish.getId());
                 }
                 coursePlan.setTimeSlotId(1L);
-                coursePlan.setCourseTypeId(3);
+                coursePlan.setCourseTypeId(3L);
                 coursePlan.setDayOfWeek(j);
                 coursePlanList.add(coursePlan);
             }

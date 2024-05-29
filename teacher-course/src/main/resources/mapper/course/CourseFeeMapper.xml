@@ -11,6 +11,7 @@
               from t_course_fee
               where date between #{start} and #{end}
                 and del_flag = 0
+              and teacher_id = 1778050430058127362
               group by teacher_id) t
                  left join t_teacher teacher on teacher.id = t.teacher_id and teacher.del_flag = 0
         order by teacher.create_time desc

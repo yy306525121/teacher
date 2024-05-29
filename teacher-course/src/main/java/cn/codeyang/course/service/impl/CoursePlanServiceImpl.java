@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -98,8 +99,8 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
     }
 
     @Override
-    public List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId) {
-        return baseMapper.selectByClassInfoIdOrTeacherId(classInfoId, teacherId);
+    public List<CoursePlanDto> selectByClassInfoIdOrTeacherId(Long classInfoId, Long teacherId, LocalDate localDate) {
+        return baseMapper.selectByClassInfoIdOrTeacherId(classInfoId, teacherId, localDate);
     }
 
     @Override
@@ -118,12 +119,16 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
         Long fromSubjectId = request.getFromSubjectId();
         Long toSubjectId = request.getToSubjectId();
 
+        Long toCourseTypeId = request.getToCourseTypeId();
+
         List<CoursePlan> originCoursePlanList = baseMapper.selectList(Wrappers.<CoursePlan>lambdaQuery()
                 .eq(CoursePlan::getClassInfoId, classInfoId)
                 .eq(fromTeacherId != null, CoursePlan::getTeacherId, fromTeacherId)
                 .eq(fromSubjectId != null, CoursePlan::getSubjectId, fromSubjectId)
                 .eq(week != null, CoursePlan::getDayOfWeek, week)
                 .eq(timeSlotId != null, CoursePlan::getTimeSlotId, timeSlotId)
+                .le(CoursePlan::getStart, date)
+                .ge(CoursePlan::getEnd, date)
         );
 
         List<CoursePlan> newCoursePlanList = new ArrayList<>(originCoursePlanList.size());
@@ -134,7 +139,13 @@ public class CoursePlanServiceImpl extends ServiceImpl<CoursePlanMapper, CourseP
             newCoursePlan.setStart(date);
             newCoursePlan.setEnd(LocalDate.of(2999, 1, 1));
             newCoursePlan.setTeacherId(request.getToTeacherId());
-            newCoursePlan.setSubjectId(toSubjectId);
+            if (toSubjectId != null) {
+                newCoursePlan.setSubjectId(toSubjectId);
+            }
+            if (toCourseTypeId != null) {
+                newCoursePlan.setCourseTypeId(toCourseTypeId);
+            }
+            newCoursePlan.setCreateTime(LocalDateTime.now());
 
             coursePlan.setEnd(date.plusDays(-1));
 

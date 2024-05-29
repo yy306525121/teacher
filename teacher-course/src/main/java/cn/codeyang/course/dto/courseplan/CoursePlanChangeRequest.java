@@ -42,4 +42,7 @@ public class CoursePlanChangeRequest implements Serializable {
 
     private Long fromSubjectId;
     private Long toSubjectId;
+
+    private Long fromCourseTypeId;
+    private Long toCourseTypeId;
 }
